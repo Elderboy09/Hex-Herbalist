@@ -4,589 +4,984 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hex Herbalist — สารานุกรมสมุนไพร</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Sarabun:wght@300;400;500;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0e120d;
-    --bg2: #141a12;
-    --bg3: #1a2218;
-    --card: #1e2a1c;
-    --card2: #243022;
-    --border: rgba(120,160,80,0.18);
-    --border2: rgba(120,160,80,0.35);
-    --accent: #7ab840;
-    --accent2: #a8d060;
-    --accent3: #c8e88a;
-    --gold: #d4a843;
-    --gold2: #f0c86a;
-    --red: #c0402a;
-    --red2: #e05535;
-    --blue: #4488bb;
-    --blue2: #66aadd;
-    --text: #d8e8c8;
-    --text2: #9ab888;
-    --text3: #6a8858;
-    --muted: #4a6040;
-    --warm: #e8d4a0;
-    --cool: #8abcdc;
-    --font-main: 'Sarabun', sans-serif;
-    --font-display: 'Playfair Display', serif;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-main);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* Particle canvas */
-  #particles-canvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-  }
-
-  /* Header */
-  .site-header {
-    position: relative;
-    z-index: 10;
-    text-align: center;
-    padding: 4rem 2rem 2rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .site-header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 50%; transform: translateX(-50%);
-    width: 300px; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  }
-
-  .header-symbol {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    display: inline-block;
-    animation: float 4s ease-in-out infinite;
-    filter: drop-shadow(0 0 12px rgba(122,184,64,0.5));
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-
-  .site-title {
-    font-family: var(--font-display);
-    font-size: 3.5rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    background: linear-gradient(135deg, var(--accent2) 0%, var(--gold2) 50%, var(--accent3) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.1;
-  }
-
-  .site-subtitle {
-    font-size: 0.95rem;
-    color: var(--text2);
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    margin-top: 0.4rem;
-  }
-
-  /* Search bar */
-  .search-container {
-    position: relative;
-    z-index: 10;
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 0 1.5rem;
-  }
-
-  .search-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 1.2rem;
-    color: var(--text3);
-    font-size: 1.1rem;
-    pointer-events: none;
-  }
-
-  .search-input {
-    width: 100%;
-    background: var(--card);
-    border: 1px solid var(--border2);
-    border-radius: 999px;
-    padding: 0.8rem 1.2rem 0.8rem 3rem;
-    color: var(--text);
-    font-family: var(--font-main);
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-
-  .search-input::placeholder { color: var(--muted); }
-  .search-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(122,184,64,0.15);
-  }
-
-  /* Filter chips */
-  .filter-bar {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    max-width: 900px;
-    margin: 0 auto 2rem;
-    padding: 0 1.5rem;
-  }
-
-  .filter-chip {
-    padding: 0.35rem 1rem;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--text2);
-    font-family: var(--font-main);
-    font-size: 0.82rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-
-  .filter-chip:hover { border-color: var(--accent); color: var(--accent2); }
-  .filter-chip.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #0e120d;
-    font-weight: 600;
-  }
-
-  /* Main layout */
-  .main-layout {
-    position: relative;
-    z-index: 10;
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 0;
-    max-width: 1400px;
-    margin: 0 auto;
-    min-height: calc(100vh - 250px);
-  }
-
-  /* Sidebar */
-  .sidebar {
-    border-right: 1px solid var(--border);
-    padding: 1.5rem;
-    overflow-y: auto;
-    max-height: calc(100vh - 250px);
-    position: sticky;
-    top: 0;
-  }
-
-  .sidebar-title {
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: 1rem;
-    padding-left: 0.5rem;
-  }
-
-  .herb-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .herb-list-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.65rem 0.75rem;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 1px solid transparent;
-  }
-
-  .herb-list-item:hover {
-    background: var(--card);
-    border-color: var(--border);
-  }
-
-  .herb-list-item.active {
-    background: var(--card2);
-    border-color: var(--accent);
-  }
-
-  .herb-list-item.hidden { display: none; }
-
-  .herb-icon {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-  }
-
-  .herb-list-info { flex: 1; min-width: 0; }
-  .herb-list-name { font-size: 0.88rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .herb-list-category { font-size: 0.72rem; color: var(--text3); }
-
-  .effect-badge {
-    font-size: 0.62rem;
-    padding: 0.15rem 0.4rem;
-    border-radius: 4px;
-    font-weight: 600;
-    flex-shrink: 0;
-  }
-
-  .effect-cool { background: rgba(68,136,187,0.2); color: var(--cool); }
-  .effect-hot { background: rgba(192,64,42,0.2); color: var(--red2); }
-  .effect-neutral { background: rgba(122,184,64,0.2); color: var(--accent2); }
-
-  /* Detail panel */
-  .detail-panel {
-    padding: 2rem 2.5rem;
-    overflow-y: auto;
-    max-height: calc(100vh - 250px);
-  }
-
-  .detail-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 60vh;
-    text-align: center;
-    color: var(--text3);
-  }
-
-  .detail-placeholder .big-symbol { font-size: 4rem; margin-bottom: 1rem; opacity: 0.4; }
-  .detail-placeholder p { font-size: 1rem; color: var(--text3); }
-
-  /* Herb detail */
-  .herb-detail { display: none; animation: fadeInUp 0.4s ease; }
-  .herb-detail.active { display: block; }
-
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .detail-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .detail-icon-wrap {
-    width: 80px; height: 80px;
-    border-radius: 20px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 2.8rem;
-    flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .detail-icon-wrap::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    border: 1px solid var(--border2);
-  }
-
-  .detail-title-group { flex: 1; }
-
-  .detail-name-en {
-    font-family: var(--font-display);
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--accent3);
-    line-height: 1.1;
-  }
-
-  .detail-name-th {
-    font-size: 1.1rem;
-    color: var(--text2);
-    margin-top: 0.2rem;
-  }
-
-  .detail-meta {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-top: 0.75rem;
-  }
-
-  .meta-tag {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
-    border: 1px solid;
-    font-weight: 500;
-  }
-
-  /* Tabs */
-  .detail-tabs {
-    display: flex;
-    gap: 0;
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .detail-tab {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.85rem;
-    cursor: pointer;
-    color: var(--text3);
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    white-space: nowrap;
-    font-family: var(--font-main);
-    background: none;
-    border-top: none; border-left: none; border-right: none;
-  }
-
-  .detail-tab:hover { color: var(--text2); }
-  .detail-tab.active {
-    color: var(--accent2);
-    border-bottom-color: var(--accent);
-  }
-
-  .tab-content { display: none; }
-  .tab-content.active { display: block; animation: fadeInUp 0.3s ease; }
-
-  /* Description */
-  .herb-desc {
-    font-size: 0.95rem;
-    line-height: 1.8;
-    color: var(--text2);
-    margin-bottom: 1.5rem;
-    padding: 1.25rem;
-    background: var(--card);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-  }
-
-  /* Properties grid */
-  .properties-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .property-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem;
-    transition: border-color 0.2s;
-  }
-
-  .property-card:hover { border-color: var(--border2); }
-
-  .property-icon { font-size: 1.3rem; margin-bottom: 0.5rem; }
-  .property-title { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 0.35rem; }
-  .property-text { font-size: 0.9rem; color: var(--text2); line-height: 1.6; }
-
-  /* Usage steps */
-  .usage-method {
-    margin-bottom: 1.5rem;
-    background: var(--card);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-  }
-
-  .usage-method-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.85rem 1.1rem;
-    background: var(--card2);
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  .usage-method-header:hover { background: var(--bg3); }
-
-  .method-label { font-size: 0.88rem; font-weight: 600; color: var(--accent2); flex: 1; }
-  .method-arrow { color: var(--text3); font-size: 0.75rem; transition: transform 0.25s; }
-  .usage-method.open .method-arrow { transform: rotate(180deg); }
-
-  .usage-method-body {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s ease;
-  }
-
-  .usage-method.open .usage-method-body { max-height: 600px; }
-
-  .method-steps {
-    padding: 1rem 1.1rem;
-    font-size: 0.9rem;
-    color: var(--text2);
-    line-height: 1.7;
-  }
-
-  /* Warning box */
-  .warning-box {
-    background: rgba(192,64,42,0.1);
-    border: 1px solid rgba(192,64,42,0.3);
-    border-radius: 12px;
-    padding: 1rem 1.1rem;
-    font-size: 0.9rem;
-    color: var(--warm);
-    line-height: 1.7;
-  }
-
-  .warning-box strong {
-    display: block;
-    color: var(--red2);
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 0.4rem;
-  }
-
-  /* Progress bar for properties */
-  .prop-bar-wrap { margin-top: 0.5rem; }
-  .prop-bar {
-    height: 4px;
-    border-radius: 2px;
-    background: var(--border);
-    overflow: hidden;
-    margin-top: 0.3rem;
-  }
-
-  .prop-bar-fill {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 1s ease;
-    width: 0;
-  }
-
-  /* Responsive */
-  @media (max-width: 900px) {
-    .main-layout { grid-template-columns: 1fr; }
-    .sidebar { max-height: 250px; position: static; }
-    .detail-panel { max-height: none; }
-    .site-title { font-size: 2.2rem; }
-  }
-
-  /* Floating ornament particles */
-  .ornament {
-    position: fixed;
-    pointer-events: none;
-    z-index: 1;
-    font-size: 1.5rem;
-    opacity: 0;
-    animation: drift 18s ease-in-out infinite;
-  }
-
-  @keyframes drift {
-    0% { opacity: 0; transform: translateY(100vh) rotate(0deg); }
-    10% { opacity: 0.15; }
-    90% { opacity: 0.1; }
-    100% { opacity: 0; transform: translateY(-100px) rotate(360deg); }
-  }
-
-  /* Glow on active sidebar item */
-  .herb-list-item.active .herb-icon { box-shadow: 0 0 16px rgba(122,184,64,0.4); }
-
-  /* No results */
-  .no-results {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text3);
-    font-size: 0.9rem;
-    display: none;
-  }
+:root {
+  --bg: #0d0f0a;
+  --bg2: #111408;
+  --bg3: #181c10;
+  --card: #1a1f12;
+  --card2: #202818;
+  --border: rgba(160,130,60,0.18);
+  --border2: rgba(180,150,70,0.4);
+  --border3: rgba(180,150,70,0.7);
+  --accent: #8aaa38;
+  --accent2: #aac850;
+  --accent3: #c8e070;
+  --gold: #c8942a;
+  --gold2: #e8b840;
+  --gold3: #f8d060;
+  --copper: #b8602a;
+  --copper2: #d87838;
+  --brass: #a88830;
+  --brass2: #c8a840;
+  --red: #b83020;
+  --red2: #d84830;
+  --steam: rgba(200,220,180,0.06);
+  --text: #d8d0b0;
+  --text2: #a09870;
+  --text3: #706840;
+  --muted: #504830;
+  --warm: #e8d090;
+  --cool: #80a8c0;
+  --glow-green: rgba(138,170,56,0.3);
+  --glow-gold: rgba(200,148,42,0.35);
+  --glow-copper: rgba(184,96,42,0.3);
+  --font-main: 'Sarabun', sans-serif;
+  --font-display: 'IM Fell English', 'Playfair Display', serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(138,170,56,0.07) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(160,130,60,0.015) 40px, rgba(160,130,60,0.015) 41px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(160,130,60,0.015) 40px, rgba(160,130,60,0.015) 41px);
+}
+
+/* ── STEAM CANVAS ── */
+#steam-canvas {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  pointer-events:none; z-index:0; opacity:0.5;
+}
+
+/* ── GEAR SVG ANIMATIONS ── */
+@keyframes spin-cw  { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes spin-ccw { from{transform:rotate(0deg)} to{transform:rotate(-360deg)} }
+@keyframes float-up { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+@keyframes pulse-glow { 0%,100%{opacity:0.4; filter:drop-shadow(0 0 4px var(--gold))} 50%{opacity:1; filter:drop-shadow(0 0 14px var(--gold))} }
+@keyframes drift-smoke { 0%{opacity:0; transform:translateY(0) scale(1)} 40%{opacity:0.18} 100%{opacity:0; transform:translateY(-80px) scale(2.5)} }
+@keyframes needle-swing { 0%,100%{transform:rotate(-25deg)} 50%{transform:rotate(25deg)} }
+@keyframes pressure-pulse { 0%,100%{stroke-dashoffset:94} 50%{stroke-dashoffset:30} }
+@keyframes bubble-rise { 0%{opacity:0; transform:translateY(0) scale(0.5)} 50%{opacity:0.6} 100%{opacity:0; transform:translateY(-60px) scale(1.2)} }
+@keyframes flicker { 0%,100%{opacity:1} 50%{opacity:0.7} 93%{opacity:0.9} 96%{opacity:0.4} }
+@keyframes shimmer { 0%{background-position: -200% center} 100%{background-position: 200% center} }
+@keyframes pipe-flow { 0%{stroke-dashoffset:60} 100%{stroke-dashoffset:0} }
+@keyframes dial-tick { 0%{transform:rotate(-60deg)} 100%{transform:rotate(60deg)} }
+@keyframes rivet-glow { 0%,100%{box-shadow:0 0 3px var(--brass)} 50%{box-shadow:0 0 10px var(--gold3)} }
+
+/* ── HEADER ── */
+.site-header {
+  position: relative; z-index:10;
+  text-align: center;
+  padding: 3rem 2rem 2rem;
+  border-bottom: 2px solid;
+  border-image: linear-gradient(90deg, transparent 0%, var(--brass) 20%, var(--gold2) 50%, var(--brass) 80%, transparent 100%) 1;
+  background: linear-gradient(180deg, rgba(30,24,8,0.8) 0%, transparent 100%);
+  overflow: hidden;
+}
+
+/* Steampunk top pipes */
+.header-pipes {
+  position: absolute; top:0; left:0; width:100%; height:30px;
+  pointer-events: none;
+}
+
+.header-symbol {
+  font-size: 2.2rem;
+  display: inline-block;
+  animation: float-up 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px var(--gold2));
+  position: relative; z-index:2;
+}
+
+.site-title {
+  font-family: var(--font-display);
+  font-size: 3.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  background: linear-gradient(135deg, var(--brass) 0%, var(--gold3) 30%, var(--accent3) 55%, var(--gold2) 75%, var(--copper2) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+  line-height: 1.1;
+  text-shadow: none;
+  position: relative; z-index:2;
+}
+
+.site-subtitle {
+  font-size: 0.88rem;
+  color: var(--text3);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  margin-top: 0.4rem;
+  position: relative; z-index:2;
+}
+
+/* Decorative gear strip */
+.gear-strip {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.5rem; margin-top: 0.8rem; position: relative; z-index:2;
+}
+.gear-strip .g-line {
+  flex:1; max-width:200px; height:1px;
+  background: linear-gradient(90deg, transparent, var(--brass), transparent);
+}
+.gear-icon { font-size:1rem; animation: spin-cw 8s linear infinite; display:inline-block; opacity:0.6; }
+.gear-icon.ccw { animation: spin-ccw 6s linear infinite; }
+
+/* Rivets */
+.rivet {
+  width:8px; height:8px; border-radius:50%;
+  background: radial-gradient(circle at 35% 35%, var(--gold3), var(--brass));
+  display: inline-block;
+  animation: rivet-glow 3s ease-in-out infinite;
+}
+
+/* ── SEARCH BAR ── */
+.search-container {
+  position:relative; z-index:10;
+  max-width:620px; margin:2rem auto;
+  padding:0 1.5rem;
+}
+.search-wrap { position:relative; display:flex; align-items:center; }
+.search-icon { position:absolute; left:1.2rem; color:var(--text3); font-size:1.1rem; pointer-events:none; }
+.search-input {
+  width:100%;
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 0.85rem 1.2rem 0.85rem 3rem;
+  color: var(--text);
+  font-family: var(--font-main); font-size:1rem;
+  outline: none;
+  clip-path: polygon(8px 0%, calc(100% - 8px) 0%, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0% calc(100% - 8px), 0% 8px);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+}
+.search-input::placeholder { color:var(--muted); }
+.search-input:focus {
+  border-color: var(--gold2);
+  box-shadow: 0 0 0 2px rgba(200,148,42,0.2), inset 0 0 20px rgba(0,0,0,0.3);
+}
+
+/* ── FILTER CHIPS ── */
+.filter-bar {
+  position:relative; z-index:10;
+  display:flex; gap:0.4rem; flex-wrap:wrap;
+  justify-content:center;
+  max-width:1000px; margin:0 auto 1.5rem;
+  padding:0 1.5rem;
+}
+.filter-chip {
+  padding:0.3rem 0.9rem;
+  border-radius:2px;
+  border:1px solid var(--border);
+  background: var(--card);
+  color: var(--text3);
+  font-family: var(--font-main); font-size:0.8rem;
+  cursor:pointer;
+  transition: all 0.2s;
+  clip-path: polygon(6px 0%, calc(100% - 6px) 0%, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0% calc(100% - 6px), 0% 6px);
+  white-space: nowrap;
+}
+.filter-chip:hover { border-color:var(--brass); color:var(--brass2); }
+.filter-chip.active {
+  background: linear-gradient(135deg, var(--brass), var(--gold));
+  border-color: var(--gold2);
+  color: #0d0f0a;
+  font-weight:600;
+  box-shadow: 0 0 8px var(--glow-gold);
+}
+
+/* ── MAIN LAYOUT ── */
+.main-layout {
+  position:relative; z-index:10;
+  display:grid;
+  grid-template-columns: 290px 1fr;
+  gap:0;
+  max-width:1440px; margin:0 auto;
+  min-height: calc(100vh - 300px);
+  border-top: 1px solid var(--border2);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  border-right: 2px solid;
+  border-image: linear-gradient(180deg, var(--brass) 0%, var(--border) 50%, var(--brass) 100%) 1;
+  padding:1.2rem 1rem;
+  overflow-y:auto;
+  max-height:calc(100vh - 300px);
+  position:sticky; top:0;
+  background: linear-gradient(180deg, rgba(26,26,8,0.3) 0%, transparent 100%);
+}
+
+.sidebar-title {
+  font-size:0.65rem; letter-spacing:0.3em; text-transform:uppercase;
+  color:var(--brass); margin-bottom:0.8rem; padding-left:0.4rem;
+  display:flex; align-items:center; gap:0.4rem;
+}
+.sidebar-title::before, .sidebar-title::after {
+  content:''; flex:1; height:1px;
+  background: linear-gradient(90deg, transparent, var(--brass));
+}
+.sidebar-title::after { background: linear-gradient(90deg, var(--brass), transparent); }
+
+.herb-list { display:flex; flex-direction:column; gap:0.2rem; }
+
+.herb-list-item {
+  display:flex; align-items:center; gap:0.6rem;
+  padding:0.55rem 0.65rem;
+  border-radius:2px;
+  cursor:pointer;
+  transition: all 0.2s;
+  border:1px solid transparent;
+  clip-path: polygon(4px 0%, calc(100% - 4px) 0%, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0% calc(100% - 4px), 0% 4px);
+}
+.herb-list-item:hover { background:var(--card); border-color:var(--border2); }
+.herb-list-item.active {
+  background: var(--card2);
+  border-color: var(--gold);
+  box-shadow: inset 2px 0 0 var(--gold), 0 0 8px rgba(200,148,42,0.15);
+}
+.herb-list-item.hidden { display:none; }
+
+.herb-icon {
+  width:30px; height:30px; border-radius:4px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.95rem; flex-shrink:0;
+  border:1px solid rgba(200,148,42,0.2);
+}
+.herb-list-item.active .herb-icon { box-shadow:0 0 10px var(--glow-gold); }
+
+.herb-list-info { flex:1; min-width:0; }
+.herb-list-name { font-size:0.85rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text); }
+.herb-list-category { font-size:0.68rem; color:var(--text3); }
+
+.effect-badge {
+  font-size:0.58rem; padding:0.1rem 0.35rem;
+  border-radius:2px; font-weight:700; flex-shrink:0;
+  letter-spacing:0.05em;
+  clip-path: polygon(3px 0%, calc(100% - 3px) 0%, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0% calc(100% - 3px), 0% 3px);
+}
+.effect-cool { background:rgba(80,120,160,0.2); color:var(--cool); border:1px solid rgba(80,120,160,0.3); }
+.effect-hot  { background:rgba(184,96,42,0.2); color:var(--copper2); border:1px solid rgba(184,96,42,0.3); }
+.effect-neutral { background:rgba(168,136,48,0.2); color:var(--brass2); border:1px solid rgba(168,136,48,0.3); }
+
+/* ── DETAIL PANEL ── */
+.detail-panel {
+  padding:1.8rem 2.2rem;
+  overflow-y:auto;
+  max-height:calc(100vh - 300px);
+  background: linear-gradient(135deg, rgba(20,18,8,0.4) 0%, transparent 60%);
+}
+
+.detail-placeholder {
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; min-height:60vh; text-align:center;
+  color:var(--text3);
+}
+.detail-placeholder .big-symbol { font-size:5rem; margin-bottom:1rem; opacity:0.25; animation:float-up 4s ease-in-out infinite; }
+.detail-placeholder p { font-size:0.9rem; color:var(--text3); letter-spacing:0.1em; }
+
+/* ── HERB DETAIL ── */
+.herb-detail { display:none; animation: fadeInUp 0.35s ease; }
+.herb-detail.active { display:block; }
+
+@keyframes fadeInUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+/* Detail header */
+.detail-header {
+  display:flex; align-items:flex-start; gap:1.5rem;
+  margin-bottom:1.5rem;
+  padding-bottom:1.5rem;
+  border-bottom:1px solid var(--border2);
+  position:relative;
+}
+.detail-header::after {
+  content:'';
+  position:absolute; bottom:-1px; left:0; width:80px; height:2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+.detail-icon-wrap {
+  width:76px; height:76px; border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.5rem; flex-shrink:0;
+  position:relative;
+  border: 2px solid var(--brass);
+  box-shadow: 0 0 20px var(--glow-gold), inset 0 0 12px rgba(0,0,0,0.5);
+}
+.detail-icon-wrap::before {
+  content:''; position:absolute; inset:3px;
+  border:1px solid rgba(200,168,64,0.3); border-radius:4px;
+}
+/* Corner rivets on icon */
+.detail-icon-wrap::after {
+  content:'⬡';
+  position:absolute; top:-6px; right:-6px;
+  font-size:10px; color:var(--brass2); line-height:1;
+}
+
+.detail-title-group { flex:1; }
+.detail-name-en {
+  font-family: var(--font-display);
+  font-size:2.2rem; font-weight:700;
+  color:var(--gold3); line-height:1.1;
+  text-shadow: 0 0 20px rgba(248,208,96,0.3);
+}
+.detail-name-th {
+  font-size:1rem; color:var(--text2); margin-top:0.2rem;
+  letter-spacing:0.05em;
+}
+.detail-meta {
+  display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.65rem;
+}
+.meta-tag {
+  font-size:0.72rem; padding:0.22rem 0.7rem;
+  border:1px solid; border-radius:2px; font-weight:500;
+  clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
+}
+
+/* ── STEAMPUNK INFO CARDS ── */
+.herb-desc-card {
+  background: var(--card);
+  border:1px solid var(--border2);
+  border-radius:4px;
+  padding:1.2rem 1.4rem;
+  font-size:0.93rem;
+  line-height:1.85;
+  color:var(--text2);
+  position:relative;
+  margin-bottom:1.4rem;
+  clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0% calc(100% - 10px), 0% 10px);
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
+}
+.herb-desc-card::before {
+  content: '❝';
+  position:absolute; top:0.5rem; left:0.8rem;
+  font-size:1.8rem; color:var(--brass); opacity:0.4;
+  line-height:1; font-family: serif;
+}
+
+/* Properties gauge grid */
+.properties-grid {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+  gap:0.9rem; margin-bottom:1.4rem;
+}
+.property-card {
+  background: var(--card);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:0.9rem 1rem;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  position:relative;
+  clip-path: polygon(8px 0%, calc(100% - 8px) 0%, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0% calc(100% - 8px), 0% 8px);
+  overflow:hidden;
+}
+.property-card::before {
+  content:''; position:absolute; top:0; left:0;
+  width:3px; height:100%;
+  background: linear-gradient(180deg, var(--gold), var(--brass));
+  opacity:0;
+  transition: opacity 0.25s;
+}
+.property-card:hover { border-color:var(--border2); box-shadow:0 0 12px rgba(200,148,42,0.1); }
+.property-card:hover::before { opacity:1; }
+
+.property-icon { font-size:1.2rem; margin-bottom:0.4rem; }
+.property-title { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--brass2); margin-bottom:0.3rem; }
+.property-text { font-size:0.87rem; color:var(--text2); line-height:1.55; }
+
+/* Steampunk gauge bar */
+.prop-bar-wrap { margin-top:0.6rem; }
+.prop-bar-label { display:flex; justify-content:space-between; margin-bottom:0.25rem; }
+.prop-bar-label span { font-size:0.65rem; color:var(--text3); letter-spacing:0.05em; }
+.prop-bar {
+  height:6px; border-radius:1px;
+  background: rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  overflow:hidden; position:relative;
+}
+.prop-bar::before {
+  content:''; position:absolute; inset:0;
+  background: repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(0,0,0,0.15) 8px, rgba(0,0,0,0.15) 9px);
+}
+.prop-bar-fill {
+  height:100%; border-radius:1px;
+  transition: width 1.2s cubic-bezier(.22,.68,0,1.2);
+  width:0; position:relative;
+  background: linear-gradient(90deg, var(--brass), var(--gold2), var(--gold3));
+  box-shadow: 0 0 8px var(--glow-gold);
+}
+.prop-bar-fill::after {
+  content:''; position:absolute; right:0; top:0;
+  width:3px; height:100%;
+  background: var(--gold3);
+  box-shadow: 0 0 4px var(--gold3);
+}
+
+/* ── TABS ── */
+.detail-tabs {
+  display:flex; gap:0;
+  margin-bottom:1.4rem;
+  border-bottom:1px solid var(--border2);
+  background: var(--card);
+  border-radius:4px 4px 0 0;
+  overflow: hidden;
+}
+.detail-tab {
+  padding:0.6rem 1.1rem; font-size:0.82rem; cursor:pointer;
+  color:var(--text3); border-bottom:2px solid transparent;
+  transition: all 0.2s; white-space:nowrap;
+  font-family:var(--font-main); background:none;
+  border-top:none; border-left:none; border-right:none;
+  border-right: 1px solid var(--border);
+  letter-spacing:0.03em;
+}
+.detail-tab:last-child { border-right:none; }
+.detail-tab:hover { color:var(--text2); background:rgba(200,148,42,0.05); }
+.detail-tab.active {
+  color:var(--gold2); border-bottom-color:var(--gold);
+  background: rgba(200,148,42,0.08);
+}
+
+.tab-content { display:none; }
+.tab-content.active { display:block; animation:fadeInUp 0.25s ease; }
+
+/* ── USAGE ACCORDIONS ── */
+.usage-method {
+  margin-bottom:0.9rem;
+  background:var(--card);
+  border-radius:4px;
+  border:1px solid var(--border);
+  overflow:hidden;
+  clip-path: polygon(6px 0%, calc(100% - 6px) 0%, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0% calc(100% - 6px), 0% 6px);
+  transition: border-color 0.2s;
+}
+.usage-method:hover { border-color:var(--border2); }
+
+.usage-method-header {
+  display:flex; align-items:center; gap:0.65rem;
+  padding:0.75rem 1rem;
+  background: linear-gradient(90deg, var(--card2), var(--card));
+  border-bottom:1px solid transparent;
+  cursor:pointer; transition:background 0.2s;
+  border-bottom: 1px solid var(--border);
+}
+.usage-method-header:hover { background:rgba(200,148,42,0.06); }
+
+.method-dot {
+  width:8px; height:8px; border-radius:50%;
+  background: var(--brass); flex-shrink:0;
+  box-shadow:0 0 6px var(--glow-gold);
+  animation: rivet-glow 2s ease-in-out infinite;
+}
+.method-label { font-size:0.86rem; font-weight:600; color:var(--brass2); flex:1; }
+.method-arrow { color:var(--text3); font-size:0.7rem; transition:transform 0.25s; }
+.usage-method.open .method-arrow { transform:rotate(180deg); }
+
+.usage-method-body {
+  max-height:0; overflow:hidden;
+  transition:max-height 0.35s ease;
+}
+.usage-method.open .usage-method-body { max-height:700px; }
+.method-steps {
+  padding:0.9rem 1rem;
+  font-size:0.88rem; color:var(--text2); line-height:1.75;
+  border-left:2px solid var(--brass);
+  margin:0.5rem; border-radius:0 2px 2px 0;
+  background: rgba(0,0,0,0.15);
+}
+
+/* ── WARNING BOX ── */
+.warning-box {
+  background: linear-gradient(135deg, rgba(184,48,32,0.12), rgba(184,48,32,0.06));
+  border:1px solid rgba(184,48,32,0.4);
+  border-radius:4px;
+  padding:1rem 1.1rem;
+  font-size:0.9rem; color:var(--warm); line-height:1.7;
+  clip-path: polygon(6px 0%, calc(100% - 6px) 0%, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0% calc(100% - 6px), 0% 6px);
+  position:relative;
+}
+.warning-box strong {
+  display:block; color:var(--red2);
+  font-size:0.72rem; text-transform:uppercase;
+  letter-spacing:0.15em; margin-bottom:0.4rem;
+}
+
+/* ── NO RESULTS ── */
+.no-results { text-align:center; padding:2rem; color:var(--text3); font-size:0.88rem; display:none; }
+
+/* ── STEAMPUNK DIVIDER ── */
+.sp-divider {
+  display:flex; align-items:center; gap:1rem;
+  padding:2rem 0 1rem;
+  position:relative; z-index:10;
+  max-width:1440px; margin:0 auto;
+  padding-left:2rem; padding-right:2rem;
+}
+.sp-divider-line {
+  flex:1; height:2px;
+  background: linear-gradient(90deg, transparent, var(--brass), var(--gold2), var(--brass), transparent);
+}
+.sp-divider-center {
+  display:flex; align-items:center; gap:0.5rem;
+  font-family:var(--font-display); font-size:0.75rem;
+  letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--brass2);
+}
+
+/* ══════════════════════════════════════════════════════
+   ALCHEMIST TABLE SECTION
+══════════════════════════════════════════════════════ */
+.alchemist-section {
+  position:relative; z-index:10;
+  max-width:1440px; margin:0 auto 4rem;
+  padding:0 1.5rem;
+}
+
+.alchemist-header {
+  text-align:center; margin-bottom:2rem;
+}
+.alchemist-title {
+  font-family:var(--font-display);
+  font-size:2.2rem; color:var(--gold3);
+  text-shadow:0 0 30px rgba(248,208,96,0.3);
+  letter-spacing:0.06em;
+}
+.alchemist-subtitle {
+  font-size:0.83rem; color:var(--text3);
+  letter-spacing:0.2em; text-transform:uppercase;
+  margin-top:0.3rem;
+}
+
+/* Workbench frame */
+.workbench {
+  background: linear-gradient(135deg, #141008, #1c1a0c, #141008);
+  border:2px solid var(--brass);
+  border-radius:6px;
+  padding:2rem;
+  position:relative;
+  box-shadow: 0 0 40px rgba(168,136,48,0.15), inset 0 0 60px rgba(0,0,0,0.4);
+}
+/* Corner bolts */
+.workbench::before {
+  content:'';
+  position:absolute; inset:6px;
+  border:1px solid rgba(200,168,64,0.15);
+  border-radius:4px;
+  pointer-events:none;
+}
+.bolt {
+  position:absolute; width:12px; height:12px; border-radius:50%;
+  background:radial-gradient(circle at 40% 40%, var(--gold3), var(--brass));
+  border:1px solid var(--brass2);
+  box-shadow:0 0 5px var(--glow-gold);
+  animation: rivet-glow 3s ease-in-out infinite;
+}
+.bolt.tl{top:4px;left:4px} .bolt.tr{top:4px;right:4px}
+.bolt.bl{bottom:4px;left:4px} .bolt.br{bottom:4px;right:4px}
+
+/* Slots row */
+.brewing-layout {
+  display:grid;
+  grid-template-columns:1fr 80px 1fr 80px 60px 1fr;
+  gap:0.8rem; align-items:center;
+  margin-bottom:1.5rem;
+}
+
+.slot-group { display:flex; flex-direction:column; gap:0.5rem; }
+.slot-label {
+  font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--brass2); text-align:center; font-family:var(--font-display);
+}
+
+/* Ingredient slots */
+.slots-row { display:flex; flex-direction:column; gap:0.5rem; }
+.ingredient-slot {
+  background: rgba(0,0,0,0.4);
+  border:2px dashed rgba(200,168,64,0.3);
+  border-radius:4px;
+  padding:0.7rem;
+  min-height:80px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  cursor:pointer; text-align:center;
+  transition: all 0.25s;
+  clip-path: polygon(8px 0%, calc(100% - 8px) 0%, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0% calc(100% - 8px), 0% 8px);
+  position:relative;
+}
+.ingredient-slot:hover { border-color:var(--brass); background:rgba(200,148,42,0.06); }
+.ingredient-slot.filled {
+  border-style:solid; border-color:var(--gold);
+  background: rgba(200,148,42,0.1);
+  box-shadow:inset 0 0 12px rgba(200,148,42,0.1);
+}
+.ingredient-slot.filled:hover { border-color:var(--red2); background:rgba(184,48,32,0.1); }
+.slot-empty-icon { font-size:1.5rem; opacity:0.2; margin-bottom:0.2rem; }
+.slot-empty-text { font-size:0.65rem; color:var(--text3); letter-spacing:0.05em; }
+.slot-herb-icon { font-size:1.8rem; margin-bottom:0.2rem; }
+.slot-herb-name { font-size:0.7rem; color:var(--gold2); font-weight:600; text-align:center; line-height:1.2; }
+.slot-herb-effect { font-size:0.6rem; color:var(--text3); margin-top:0.1rem; }
+.slot-remove-hint { font-size:0.6rem; color:var(--red2); margin-top:0.15rem; opacity:0.7; }
+
+/* Connector pipes */
+.pipe-connector {
+  display:flex; align-items:center; justify-content:center;
+  position:relative;
+}
+.pipe-connector svg { width:100%; height:40px; overflow:visible; }
+
+/* Cauldron */
+.cauldron-wrap {
+  display:flex; flex-direction:column; align-items:center; gap:0.4rem;
+}
+.cauldron-svg-wrap {
+  position:relative; width:80px; height:80px;
+  display:flex; align-items:center; justify-content:center;
+}
+.bubble {
+  position:absolute;
+  border-radius:50%;
+  background:rgba(138,170,56,0.4);
+  animation: bubble-rise 2s ease-out infinite;
+}
+.brew-btn {
+  padding:0.5rem 1rem;
+  background: linear-gradient(135deg, var(--brass), var(--gold));
+  border:1px solid var(--gold2); border-radius:2px;
+  color:#0d0f0a; font-family:var(--font-display);
+  font-size:0.85rem; font-weight:700; letter-spacing:0.1em;
+  cursor:pointer; white-space:nowrap;
+  clip-path: polygon(6px 0%, calc(100% - 6px) 0%, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0% calc(100% - 6px), 0% 6px);
+  transition:all 0.2s;
+  box-shadow:0 0 10px var(--glow-gold);
+}
+.brew-btn:hover { background:linear-gradient(135deg, var(--gold), var(--gold3)); box-shadow:0 0 20px var(--glow-gold); transform:translateY(-1px); }
+.brew-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+
+/* Result panel */
+.result-panel {
+  background: rgba(0,0,0,0.5);
+  border:1px solid var(--border2); border-radius:4px;
+  padding:1.2rem;
+  min-height:200px; display:flex; flex-direction:column;
+  clip-path: polygon(8px 0%, calc(100% - 8px) 0%, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0% calc(100% - 8px), 0% 8px);
+  transition: all 0.3s;
+}
+.result-panel.brewing { border-color:var(--gold); box-shadow:0 0 20px var(--glow-gold); }
+
+.result-placeholder, .result-ph {
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; flex:1; color:var(--text3); text-align:center;
+}
+.result-placeholder .rp-icon, .result-ph .rph-icon { font-size:2.5rem; opacity:0.2; margin-bottom:0.5rem; animation:float-y 3s ease-in-out infinite; }
+.result-placeholder p, .result-ph p { font-size:0.8rem; letter-spacing:0.1em; }
+
+.result-content { display:none; }
+.result-content.visible, .result-content.show { display:block; animation:fadeInUp 0.4s ease; }
+
+.potion-header, .potion-head {
+  display:flex; align-items:center; gap:0.8rem;
+  margin-bottom:0.9rem; padding-bottom:0.8rem;
+  border-bottom:1px solid var(--border2);
+}
+.potion-flask { font-size:2.5rem; filter:drop-shadow(0 0 8px var(--glow-gold)); animation:float-y 3s ease-in-out infinite; }
+.potion-name { font-family:var(--font-serif); font-size:1.3rem; color:var(--gold3); line-height:1.1; }
+.potion-type { font-size:0.72rem; color:var(--text3); letter-spacing:0.1em; text-transform:uppercase; margin-top:0.2rem; }
+
+.potion-effects, .potion-fx-list { margin-bottom:0.9rem; }
+.potion-effect-item, .pf-item {
+  display:flex; align-items:flex-start; gap:0.5rem;
+  padding:0.32rem 0; border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:0.85rem; color:var(--text2); line-height:1.5;
+}
+.pe-dot, .pf-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:0.44rem; }
+.pe-dot, .pf-dot { background:var(--gold); box-shadow:0 0 4px var(--glow-gold); }
+.pe-dot.green, .pf-dot.g { background:var(--accent2); box-shadow:0 0 4px var(--glow-green); }
+.pe-dot.red, .pf-dot.r { background:var(--red2); box-shadow:0 0 4px rgba(184,48,32,0.4); }
+.pf-dot.y { background:var(--gold2); box-shadow:0 0 4px var(--glow-gold); }
+
+.potion-warning, .potion-warn {
+  font-size:0.82rem; color:var(--warm);
+  background:rgba(184,48,32,0.08);
+  border:1px solid rgba(184,48,32,0.2);
+  border-radius:3px; padding:0.5rem 0.7rem;
+  margin-top:0.5rem;
+}
+
+/* Herb picker panel */
+.herb-picker {
+  margin-top:1.5rem;
+  border-top:1px solid var(--border2);
+  padding-top:1.2rem;
+}
+.picker-label {
+  font-size:0.68rem; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--brass2); margin-bottom:0.7rem; font-family:var(--font-display);
+  display:flex; align-items:center; gap:0.5rem;
+}
+.picker-label::after { content:''; flex:1; height:1px; background:linear-gradient(90deg, var(--brass), transparent); }
+
+.herb-picker-grid {
+  display:flex; flex-wrap:wrap; gap:0.35rem;
+  max-height:150px; overflow-y:auto;
+  padding-right:0.3rem;
+}
+.herb-picker-grid::-webkit-scrollbar { width:4px; }
+.herb-picker-grid::-webkit-scrollbar-track { background:transparent; }
+.herb-picker-grid::-webkit-scrollbar-thumb { background:var(--brass); border-radius:2px; }
+
+.picker-herb-btn {
+  display:flex; align-items:center; gap:0.35rem;
+  padding:0.3rem 0.55rem;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:2px; cursor:pointer; font-family:var(--font-main);
+  font-size:0.75rem; color:var(--text2);
+  transition:all 0.15s; white-space:nowrap;
+  clip-path: polygon(4px 0%, calc(100% - 4px) 0%, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0% calc(100% - 4px), 0% 4px);
+}
+.picker-herb-btn:hover { border-color:var(--brass); color:var(--brass2); background:rgba(200,148,42,0.08); }
+.picker-herb-btn.selected { border-color:var(--gold); color:var(--gold2); background:rgba(200,148,42,0.15); }
+.picker-herb-btn.disabled { opacity:0.35; cursor:not-allowed; }
+
+/* Brewing animation overlay */
+.brewing-overlay, .brew-overlay {
+  position:fixed; inset:0; z-index:200;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background:rgba(0,0,0,0.88);
+  backdrop-filter:blur(5px);
+  opacity:0; pointer-events:none;
+  transition:opacity 0.3s;
+}
+.brewing-overlay.active, .brew-overlay.active { opacity:1; pointer-events:all; }
+.brew-anim-icon, .brew-overlay-icon { font-size:5rem; animation:float-y 0.8s ease-in-out infinite; filter:drop-shadow(0 0 20px var(--gold2)); }
+.brew-anim-text, .brew-overlay-text { font-family:var(--font-serif); font-size:1.4rem; color:var(--gold2); margin-top:1rem; letter-spacing:0.1em; }
+.brew-progress-bar, .brew-progress-track {
+  width:220px; height:4px; background:rgba(255,255,255,0.1);
+  border-radius:2px; margin-top:1rem; overflow:hidden;
+}
+.brew-progress-fill {
+  height:100%; width:0%; border-radius:2px;
+  background:linear-gradient(90deg, var(--brass), var(--gold3));
+  transition:width 0.1s linear;
+  box-shadow:0 0 8px var(--gold2);
+}
+
+/* Responsive */
+@media (max-width:1000px) {
+  .main-layout { grid-template-columns:1fr; }
+  .sidebar { max-height:220px; position:static; border-right:none; border-bottom:1px solid var(--border2); }
+  .detail-panel { max-height:none; }
+  .site-title { font-size:2.6rem; }
+  .brewing-layout { grid-template-columns:1fr; }
+  .pipe-connector { display:none; }
+}
+@media (max-width:640px) {
+  .brewing-layout { grid-template-columns:1fr 1fr; }
+}
 </style>
 </head>
 <body>
 
-<canvas id="particles-canvas"></canvas>
+<canvas id="steam-canvas"></canvas>
 
-<!-- Floating ornaments -->
-<div class="ornament" style="left:5%; animation-delay:0s; animation-duration:20s;">🌿</div>
-<div class="ornament" style="left:20%; animation-delay:4s; animation-duration:16s;">🍃</div>
-<div class="ornament" style="left:40%; animation-delay:8s; animation-duration:22s;">✦</div>
-<div class="ornament" style="left:60%; animation-delay:2s; animation-duration:18s;">🌱</div>
-<div class="ornament" style="left:75%; animation-delay:12s; animation-duration:15s;">🍀</div>
-<div class="ornament" style="left:88%; animation-delay:6s; animation-duration:24s;">🌸</div>
+<!-- BREWING OVERLAY -->
+<div class="brew-overlay" id="brewOverlay">
+  <div class="brew-overlay-icon">⚗️</div>
+  <div class="brew-overlay-text">กำลังกลั่นยา...</div>
+  <div class="brew-progress-track"><div class="brew-progress-fill" id="brewProgressFill"></div></div>
+</div>
 
+<!-- HEADER -->
 <header class="site-header">
-  <div class="header-symbol">🌿</div>
+  <div class="header-pipe-bar"></div>
+  <div class="gear-deco left">⚙</div>
+  <div class="gear-deco right">⚙</div>
+  <div class="header-emblem">🌿</div>
   <h1 class="site-title">Hex Herbalist</h1>
-  <p class="site-subtitle">สารานุกรมสมุนไพรและพืชสมุนไพร</p>
+  <p class="site-subtitle">สารานุกรมสมุนไพร &nbsp;✦&nbsp; The Alchemist's Compendium</p>
+  <div class="gear-strip">
+    <div class="line"></div>
+    <span class="rivet"></span>
+    <span class="gear-ic cw">⚙</span>
+    <span class="gear-ic ccw">⚙</span>
+    <span class="rivet"></span>
+    <div class="line"></div>
+  </div>
 </header>
 
+<!-- SEARCH -->
 <div class="search-container">
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
-    <input class="search-input" type="text" id="searchInput" placeholder="ค้นหาสมุนไพร... (ภาษาไทยหรืออังกฤษ)">
+    <input class="search-input" type="text" id="searchInput" placeholder="ค้นหาสมุนไพร... (Thai or English)">
   </div>
 </div>
 
+<!-- FILTER BAR -->
 <div class="filter-bar" id="filterBar">
   <button class="filter-chip active" data-filter="all">ทั้งหมด</button>
-  <button class="filter-chip" data-filter="berry">ผลเบอร์รี่</button>
-  <button class="filter-chip" data-filter="mushroom">เห็ด</button>
-  <button class="filter-chip" data-filter="herb">สมุนไพร</button>
-  <button class="filter-chip" data-filter="cool">ฤทธิ์เย็น</button>
-  <button class="filter-chip" data-filter="hot">ฤทธิ์ร้อน</button>
-  <button class="filter-chip" data-filter="neutral">ฤทธิ์กลาง</button>
-  <button class="filter-chip" data-filter="immune">เสริมภูมิคุ้มกัน</button>
-  <button class="filter-chip" data-filter="digestive">ระบบย่อยอาหาร</button>
-  <button class="filter-chip" data-filter="wound">สมานแผล</button>
-  <button class="filter-chip" data-filter="nerve">ระบบประสาท</button>
-  <button class="filter-chip" data-filter="danger">⚠ อันตราย</button>
+  <button class="filter-chip" data-filter="berry">🫐 ผลเบอร์รี่</button>
+  <button class="filter-chip" data-filter="mushroom">🍄 เห็ด</button>
+  <button class="filter-chip" data-filter="herb">🌿 สมุนไพร</button>
+  <button class="filter-chip" data-filter="cool">❄️ ฤทธิ์เย็น</button>
+  <button class="filter-chip" data-filter="hot">🔥 ฤทธิ์ร้อน</button>
+  <button class="filter-chip" data-filter="neutral">⚖️ ฤทธิ์กลาง</button>
+  <button class="filter-chip" data-filter="immune">🛡 เสริมภูมิคุ้มกัน</button>
+  <button class="filter-chip" data-filter="digestive">💨 ระบบย่อยอาหาร</button>
+  <button class="filter-chip" data-filter="wound">🩹 สมานแผล</button>
+  <button class="filter-chip" data-filter="nerve">🧠 ระบบประสาท</button>
+  <button class="filter-chip" data-filter="danger">⚠️ อันตราย</button>
 </div>
 
+<!-- MAIN LAYOUT -->
 <div class="main-layout">
-  <aside class="sidebar">
-    <p class="sidebar-title">รายการสมุนไพร</p>
-    <div class="herb-list" id="herbList"></div>
-    <div class="no-results" id="noResults">ไม่พบสมุนไพรที่ค้นหา</div>
-  </aside>
-
+  <aside class="sidebar" id="sidebar"></aside>
   <main class="detail-panel" id="detailPanel">
     <div class="detail-placeholder" id="placeholder">
-      <div class="big-symbol">🌿</div>
+      <div class="ph-icon">⚗️</div>
       <p>เลือกสมุนไพรจากรายการเพื่อดูข้อมูล</p>
     </div>
     <div id="herbDetails"></div>
   </main>
 </div>
+<div style="display:none" id="noResults" class="no-results">ไม่พบสมุนไพรที่ค้นหา</div>
+
+<!-- DIVIDER -->
+<div class="sp-divider">
+  <div class="sp-divider-line"></div>
+  <div class="sp-divider-center"><span>⚙</span><span>The Alchemist's Workshop</span><span>⚗️</span><span>โต๊ะผสมยา</span><span>⚙</span></div>
+  <div class="sp-divider-line"></div>
+</div>
+
+<!-- ALCHEMIST SECTION -->
+<section class="alchemist-section">
+  <div class="alchemist-header">
+    <h2 class="alchemist-title">⚗️ โต๊ะเล่นแร่แปรธาตุ</h2>
+    <p class="alchemist-subtitle">ผสมสมุนไพรสูงสุด 3 ชนิดเพื่อสร้าง Elixir &nbsp;•&nbsp; Alchemist's Brewing Table</p>
+  </div>
+  <div class="workbench">
+    <div class="wb-bolt tl"></div><div class="wb-bolt tr"></div>
+    <div class="wb-bolt bl"></div><div class="wb-bolt br"></div>
+    <div class="brew-row" id="brewRow">
+      <!-- Ingredient slots -->
+      <div class="slot-section">
+        <div class="slot-section-label">วัตถุดิบ</div>
+        <div class="ingredient-slot" id="slot0"></div>
+        <div class="ingredient-slot" id="slot1"></div>
+        <div class="ingredient-slot" id="slot2"></div>
+      </div>
+      <!-- Pipe A -->
+      <div class="pipe-svg-wrap">
+        <svg width="50" height="120" viewBox="0 0 50 120">
+          <path d="M25 10 Q40 30 40 60 Q40 90 25 110" fill="none" stroke="var(--brass)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="25" cy="10" r="4" fill="var(--gold2)"/><circle cx="25" cy="110" r="4" fill="var(--gold2)"/>
+          <path d="M25 10 Q40 30 40 60 Q40 90 25 110" fill="none" stroke="rgba(248,208,96,0.45)" stroke-width="1" stroke-dasharray="6 6">
+            <animate attributeName="stroke-dashoffset" from="24" to="0" dur="1.2s" repeatCount="indefinite"/>
+          </path>
+        </svg>
+      </div>
+      <!-- Cauldron + Brew btn -->
+      <div class="cauldron-wrap">
+        <div class="cauldron-svg">
+          <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="28" y1="72" x2="22" y2="88" stroke="var(--brass)" stroke-width="3" stroke-linecap="round"/>
+            <line x1="62" y1="72" x2="68" y2="88" stroke="var(--brass)" stroke-width="3" stroke-linecap="round"/>
+            <line x1="45" y1="76" x2="45" y2="88" stroke="var(--brass)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M18 40 Q14 68 30 76 Q45 82 60 76 Q76 68 72 40 Z" fill="var(--card2)" stroke="var(--brass)" stroke-width="2"/>
+            <ellipse cx="45" cy="40" rx="28" ry="8" fill="var(--card2)" stroke="var(--brass)" stroke-width="2.5"/>
+            <ellipse cx="45" cy="42" rx="24" ry="6" fill="#1a3a10" id="cauldronLiquid"/>
+            <path d="M17 48 Q8 48 8 56 Q8 62 17 62" stroke="var(--brass)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M73 48 Q82 48 82 56 Q82 62 73 62" stroke="var(--brass)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <circle cx="17" cy="55" r="3" fill="var(--gold2)"/><circle cx="73" cy="55" r="3" fill="var(--gold2)"/>
+            <circle cx="38" cy="42" r="3" fill="rgba(138,200,56,0.5)" opacity="0">
+              <animate attributeName="cy" from="42" to="20" dur="1.4s" repeatCount="indefinite" begin="0s"/>
+              <animate attributeName="opacity" values="0;0.7;0" dur="1.4s" repeatCount="indefinite" begin="0s"/>
+              <animate attributeName="r" from="3" to="5" dur="1.4s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="50" cy="42" r="2" fill="rgba(138,200,56,0.6)" opacity="0">
+              <animate attributeName="cy" from="42" to="15" dur="1.1s" repeatCount="indefinite" begin="0.5s"/>
+              <animate attributeName="opacity" values="0;0.8;0" dur="1.1s" repeatCount="indefinite" begin="0.5s"/>
+            </circle>
+            <circle cx="43" cy="42" r="2.5" fill="rgba(200,208,56,0.5)" opacity="0">
+              <animate attributeName="cy" from="42" to="10" dur="1.7s" repeatCount="indefinite" begin="0.9s"/>
+              <animate attributeName="opacity" values="0;0.6;0" dur="1.7s" repeatCount="indefinite" begin="0.9s"/>
+            </circle>
+          </svg>
+        </div>
+        <button class="brew-btn" id="brewBtn" onclick="startBrewing()" disabled>🔥 กลั่น</button>
+        <button class="brew-btn" id="clearBtn" onclick="clearSlots()" style="background:linear-gradient(135deg,#281010,#401818);border-color:var(--red2);color:var(--warm);font-size:.72rem;padding:.32rem .65rem;box-shadow:none;margin-top:0">✕ ล้าง</button>
+      </div>
+      <!-- Pipe B -->
+      <div class="pipe-svg-wrap">
+        <svg width="50" height="120" viewBox="0 0 50 120">
+          <path d="M25 10 Q10 30 10 60 Q10 90 25 110" fill="none" stroke="var(--brass)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="25" cy="10" r="4" fill="var(--gold2)"/><circle cx="25" cy="110" r="4" fill="var(--gold2)"/>
+          <path d="M25 10 Q10 30 10 60 Q10 90 25 110" fill="none" stroke="rgba(248,208,96,0.45)" stroke-width="1" stroke-dasharray="6 6">
+            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="1.2s" repeatCount="indefinite"/>
+          </path>
+        </svg>
+      </div>
+      <!-- Pressure gauge -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:.3rem;">
+        <div style="font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--brass2);font-family:var(--font-serif);">แรงดัน</div>
+        <svg viewBox="0 0 70 70" width="68" height="68">
+          <circle cx="35" cy="35" r="30" fill="var(--card2)" stroke="var(--brass)" stroke-width="2"/>
+          <circle cx="35" cy="35" r="24" fill="none" stroke="rgba(168,136,48,.25)" stroke-width="1"/>
+          <g stroke="var(--brass2)" stroke-width="1.5">
+            <line x1="35" y1="8" x2="35" y2="14"/>
+            <line x1="56" y1="14" x2="52" y2="19"/>
+            <line x1="62" y1="35" x2="56" y2="35"/>
+            <line x1="14" y1="14" x2="18" y2="19"/>
+            <line x1="8" y1="35" x2="14" y2="35"/>
+          </g>
+          <circle cx="35" cy="35" r="20" fill="none" stroke="var(--brass)" stroke-width="4"
+            stroke-dasharray="63 94" stroke-dashoffset="-16" stroke-linecap="round">
+            <animate attributeName="stroke-dasharray" values="20 137;80 57;20 137" dur="4s" repeatCount="indefinite"/>
+          </circle>
+          <line x1="35" y1="35" x2="35" y2="16" stroke="var(--red2)" stroke-width="2" stroke-linecap="round">
+            <animateTransform attributeName="transform" type="rotate" from="-50 35 35" to="50 35 35" dur="4s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1"/>
+          </line>
+          <circle cx="35" cy="35" r="3" fill="var(--gold2)"/>
+          <text x="35" y="52" text-anchor="middle" fill="var(--brass2)" font-size="7" font-family="serif">PSI</text>
+        </svg>
+      </div>
+      <!-- Result panel -->
+      <div class="result-panel" id="resultPanel">
+        <div class="result-ph" id="resultPh">
+          <div class="rph-icon">⚗️</div>
+          <p>เลือกสมุนไพรแล้วกด "กลั่น"</p>
+        </div>
+        <div class="result-content" id="resultContent"></div>
+      </div>
+    </div>
+    <!-- Herb picker -->
+    <div class="herb-picker" id="herbPickerSection">
+      <div class="picker-header">
+        <span>เลือกสมุนไพร: <span id="pickerSlotLabel" style="color:var(--gold2)">ช่องที่ 1</span></span>
+        <span class="picker-slot-indicator" id="slotStatusText">0/3 ช่อง</span>
+      </div>
+      <div class="herb-picker-grid" id="herbPickerGrid"></div>
+    </div>
+    <!-- Known recipes -->
+    <div class="recipes-panel">
+      <div class="recipes-label">สูตรยาที่รู้จัก &nbsp;•&nbsp; Known Alchemical Recipes</div>
+      <div class="recipes-grid" id="recipesGrid"></div>
+    </div>
+  </div>
+</section>
 
 <script>
+// ═══ HERB DATA ════════════════════════════════════
 const herbs = [
   // ─── BERRIES ───────────────────────────────────────────────
   {
@@ -1211,92 +1606,229 @@ const herbs = [
   },
 ];
 
-// Build herb list
-const herbList = document.getElementById('herbList');
-const detailPanel = document.getElementById('herbDetails');
-const placeholder = document.getElementById('placeholder');
+// ═══ ALCHEMIST RECIPES ═══════════════════════════
+const recipes = [
+  {
+    name:'Elixir of the Winter Ward', nameTh:'ยาป้องกันหวัดฤดูหนาว', flask:'🟣',
+    herbs:['elderberry','yarrow','wildMint'], type:'Immune Tonic',
+    effects:[
+      {dot:'g', text:'ต้านไวรัสและเสริมภูมิคุ้มกัน — สูตรยาพื้นบ้านที่ใช้มานานหลายร้อยปีในยุโรป'},
+      {dot:'g', text:'ลดไข้ ขับเหงื่อ และบรรเทาอาการหวัด ขัดจมูก คัดจมูก'},
+      {dot:'y', text:'จิบวันละ 2-3 ครั้ง ช่วงเปลี่ยนฤดูหรืออากาศเปลี่ยน เสริมภูมิระยะยาว'},
+    ],
+    warning:'Elderberry ต้องต้มให้สุกก่อนผสม ห้ามกินดิบ เพราะมีสารประกอบไซยาไนท์'
+  },
+  {
+    name:'Tincture of Blood & Iron', nameTh:'ยาบำรุงโลหิต', flask:'🔴',
+    herbs:['burdock','redRaspberry','blackberry'], type:'Blood Purifier',
+    effects:[
+      {dot:'g', text:'ฟอกเลือด ขับสารพิษออกจากกระแสเลือด บำรุงเม็ดเลือดแดง (Burdock)'},
+      {dot:'g', text:'บำรุงมดลูก ลดปวดประจำเดือน เสริมธาตุเหล็ก (Red Raspberry)'},
+      {dot:'g', text:'ต้านอนุมูลอิสระ เสริมวิตามินซีและวิตามินเค (Blackberry)'},
+    ],
+    warning:'ห้ามใช้ปริมาณมาก อาจทำให้ขาดน้ำอย่างรุนแรง ดื่มน้ำเปล่าตามมาก'
+  },
+  {
+    name:'Ginseng Vision Elixir', nameTh:'ยาบำรุงสมองและสายตา', flask:'🟡',
+    herbs:['americanGinseng','blueberry','chanterelle'], type:'Cognitive Tonic',
+    effects:[
+      {dot:'g', text:'เสริมความจำ เพิ่มสมาธิ บำรุงเซลล์สมอง (Ginseng + Chanterelle)'},
+      {dot:'g', text:'สารแอนโทไซนินบำรุงสายตา ลดความล้าจากการใช้ตา (Blueberry)'},
+      {dot:'y', text:'วิตามินดีจากเห็ดแชนเทอเรล เสริมการดูดซึมแคลเซียม ป้องกันกระดูกพรุน'},
+    ],
+    warning:'โสมอเมริกันในปริมาณมากอาจทำให้ง่วงนอน ไม่ควรดื่มก่อนขับรถ'
+  },
+  {
+    name:'Wound Seal Poultice', nameTh:'ยาสมานแผล', flask:'🟢',
+    herbs:['yarrow','blackberry','goldenCurrant'], type:'Wound Healing Salve',
+    effects:[
+      {dot:'g', text:'ห้ามเลือดทันที (Yarrow) สมานเนื้อเยื่อและฆ่าเชื้อในแผล (Blackberry)'},
+      {dot:'g', text:'ดูดหนอง ลดฝีอักเสบ ลดบวม (Golden Currant)'},
+      {dot:'y', text:'บดผสมน้ำมันมะกอกพอกบริเวณแผล เปลี่ยนผ้าพันแผลทุก 4 ชั่วโมง'},
+    ],
+    warning:'Yarrow ทำให้ผิวไวต่อแสง อย่าทาบริเวณที่โดนแดดโดยตรง'
+  },
+  {
+    name:'Calm Night Draught', nameTh:'ยานอนหลับ', flask:'🔵',
+    herbs:['chocolateDaisy','ramHead','orleanderSage'], type:'Sedative Tincture',
+    effects:[
+      {dot:'g', text:'ลดความเครียดและวิตกกังวล ทำให้ผ่อนคลาย (Chocolate Daisy + Sage)'},
+      {dot:'g', text:'กล่อมระบบประสาทให้สงบ แก้นอนไม่หลับจากความกังวล (Ram Head)'},
+      {dot:'r', text:'ใช้ปริมาณน้อยมาก Ram Head มีความเป็นพิษสูง'},
+    ],
+    warning:'⚠ Ram Head เป็นพิษ ใช้เพียง 1-2 หยด ห้ามดื่มบ่อยต่อเนื่อง ฤทธิ์แรงมาก'
+  },
+  {
+    name:'Lung & Breath Potion', nameTh:'ยาขยายหลอดลม', flask:'⚪',
+    herbs:['elderberry','wildMint','evergreenBerry'], type:'Respiratory Aid',
+    effects:[
+      {dot:'g', text:'ขยายหลอดลม บรรเทาอาการหอบหืดเบาๆ คัดจมูก (Evergreen Berry + Mint)'},
+      {dot:'g', text:'ต้านไวรัสและลดการอักเสบ ขับเสมหะ (Elderberry)'},
+      {dot:'y', text:'ชงดื่มอุ่นๆ หรือสูดไอน้ำขณะชง กลิ่นหอมช่วยเปิดทางเดินหายใจ'},
+    ],
+    warning:'ห้ามใช้ Evergreen Berry ร่วมกับยาปฏิชีวนะ เลือกเอาอย่างใดอย่างหนึ่ง'
+  },
+  {
+    name:'Detox Root Brew', nameTh:'ยาล้างพิษและไต', flask:'🟤',
+    herbs:['burdock','wildCarrot','evergreenHuckleberry'], type:'Kidney Detox Tonic',
+    effects:[
+      {dot:'g', text:'ฟอกเลือด ขับกรดยูริก ชะล้างไต ป้องกันนิ่ว (Burdock + Wild Carrot)'},
+      {dot:'g', text:'ต้านอนุมูลอิสระ ควบคุมน้ำตาลในเลือด (Huckleberry)'},
+      {dot:'y', text:'ต้มเคี่ยวนาน 30-40 นาที ดื่มขณะอุ่นๆ วันละ 1-2 แก้ว'},
+    ],
+    warning:'ดื่มน้ำมากๆ ตาม ปริมาณมากเกินไปอาจทำให้ขาดน้ำ ห้ามใช้ Huckleberry ร่วมยาปฏิชีวนะ'
+  },
+  {
+    name:'Iron Body Mushroom Broth', nameTh:'ซุปบำรุงร่างกาย', flask:'🟠',
+    herbs:['parasol','chanterelle','bayBolete'], type:'Nutritive Broth',
+    effects:[
+      {dot:'g', text:'โปรตีนสูง เสริมภูมิคุ้มกัน บำรุงระบบประสาท (เห็ดทั้ง 3 ชนิด)'},
+      {dot:'g', text:'วิตามินดี วิตามินบี เสริมกระดูก บำรุงเซลล์ประสาทและสมาธิ'},
+      {dot:'y', text:'เคี่ยวซุปนาน 1-2 ชั่วโมง ดื่มน้ำซุปอุ่น เหมาะสำหรับผู้ป่วยพักฟื้น'},
+    ],
+    warning:'ต้องผ่านความร้อนให้สุกสนิทเสมอ ระวังเห็ดพิษที่มีลักษณะใกล้เคียง'
+  },
+  {
+    name:'Smoke Purgative Draught', nameTh:'ยาขับพิษฉุกเฉิน', flask:'⚠️',
+    herbs:['bloodFlower','burdock','yarrow'], type:'Emergency Emetic',
+    effects:[
+      {dot:'r', text:'ขับพยาธิและกระตุ้นอาเจียนในกรณีได้รับสารพิษฉุกเฉิน (Blood Flower)'},
+      {dot:'g', text:'ฟอกเลือดและดึงสารพิษออกจากกระแสเลือด (Burdock)'},
+      {dot:'g', text:'ห้ามเลือดหลังอาเจียน ลดการอักเสบในหลอดอาหาร (Yarrow)'},
+    ],
+    warning:'⚠⚠ อันตรายมาก ใช้เฉพาะกรณีฉุกเฉิน Blood Flower เป็นพิษหากใช้เกินขนาด'
+  },
+];
 
-function buildHerbList(filtered) {
-  herbList.innerHTML = '';
-  let visible = 0;
-  filtered.forEach(h => {
-    const item = document.createElement('div');
-    item.className = 'herb-list-item';
-    item.dataset.id = h.id;
-    const effectClass = h.effect === 'cool' ? 'effect-cool' : h.effect === 'hot' ? 'effect-hot' : 'effect-neutral';
-    const effectShort = h.effect === 'cool' ? 'เย็น' : h.effect === 'hot' ? 'ร้อน' : 'กลาง';
-    item.innerHTML = `
-      <div class="herb-icon" style="background:${h.iconBg}">${h.icon}</div>
-      <div class="herb-list-info">
-        <div class="herb-list-name">${h.nameEn}</div>
-        <div class="herb-list-category">${h.nameTh}</div>
-      </div>
-      <span class="effect-badge ${effectClass}">${effectShort}</span>
-    `;
-    item.addEventListener('click', () => selectHerb(h));
-    herbList.appendChild(item);
-    visible++;
+// ═══ STATE ════════════════════════════════════════
+let selectedHerb = null;
+let activeFilter = 'all';
+let searchQuery = '';
+let slots = [null, null, null];
+let activePickerSlot = 0;
+
+const CATEGORIES = [
+  {key:'berry',  label:'🫐 ผลเบอร์รี่'},
+  {key:'mushroom', label:'🍄 เห็ด'},
+  {key:'herb',   label:'🌿 สมุนไพร'},
+];
+
+// ═══ SIDEBAR ══════════════════════════════════════
+function buildSidebar(list) {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.innerHTML = '';
+  const byCategory = {};
+  list.forEach(h => {
+    const cat = h.categories[0];
+    if (!byCategory[cat]) byCategory[cat] = [];
+    byCategory[cat].push(h);
   });
-  document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+  let total = 0;
+  CATEGORIES.forEach(c => {
+    const group = byCategory[c.key] || [];
+    if (!group.length) return;
+    const lbl = document.createElement('div');
+    lbl.className = 'sidebar-section-label';
+    lbl.textContent = c.label;
+    sidebar.appendChild(lbl);
+    const ul = document.createElement('div');
+    ul.className = 'herb-list';
+    group.forEach(h => {
+      const ec = h.effect==='cool'?'effect-cool':h.effect==='hot'?'effect-hot':'effect-neutral';
+      const short = h.effect==='cool'?'เย็น':h.effect==='hot'?'ร้อน':'กลาง';
+      const item = document.createElement('div');
+      item.className = 'herb-list-item' + (selectedHerb?.id===h.id?' active':'');
+      item.dataset.id = h.id;
+      item.innerHTML = `
+        <div class="herb-icon" style="background:${h.iconBg}">${h.icon}</div>
+        <div class="herb-list-info">
+          <div class="herb-list-name">${h.nameEn}</div>
+          <div class="herb-list-sub">${h.nameTh}</div>
+        </div>
+        <span class="effect-badge ${ec}">${short}</span>`;
+      item.addEventListener('click', () => selectHerb(h));
+      ul.appendChild(item);
+      total++;
+    });
+    sidebar.appendChild(ul);
+  });
+  document.getElementById('noResults').style.display = total===0 ? 'block' : 'none';
 }
 
-function selectHerb(herb) {
-  document.querySelectorAll('.herb-list-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.id === herb.id);
+function applyFilters() {
+  const q = searchQuery.toLowerCase();
+  const filtered = herbs.filter(h => {
+    const filt = activeFilter==='all' || h.filterTags.includes(activeFilter);
+    const srch = !q || h.nameEn.toLowerCase().includes(q) || h.nameTh.includes(q) || h.filterTags.some(t=>t.includes(q));
+    return filt && srch;
   });
-  placeholder.style.display = 'none';
+  buildSidebar(filtered);
+}
+
+// ═══ DETAIL ═══════════════════════════════════════
+function selectHerb(herb) {
+  selectedHerb = herb;
+  document.querySelectorAll('.herb-list-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.id===herb.id);
+  });
+  document.getElementById('placeholder').style.display = 'none';
   renderDetail(herb);
+  document.getElementById('detailPanel').scrollTop = 0;
 }
 
 function renderDetail(h) {
-  const effectClass = h.effect === 'cool' ? 'effect-cool' : h.effect === 'hot' ? 'effect-hot' : 'effect-neutral';
-  const categoryLabel = h.categories.includes('mushroom') ? '🍄 เห็ด' : h.categories.includes('berry') ? '🫐 เบอร์รี่' : '🌿 สมุนไพร';
+  const ec = h.effect==='cool'?'effect-cool':h.effect==='hot'?'effect-hot':'effect-neutral';
+  const catLabel = h.categories.includes('mushroom')?'🍄 เห็ด':h.categories.includes('berry')?'🫐 เบอร์รี่':'🌿 สมุนไพร';
+  const dangerTag = h.filterTags.includes('danger')
+    ? `<span class="meta-tag" style="border-color:rgba(184,48,32,.5);color:var(--red2)">⚠ อันตราย</span>` : '';
 
   const propsHtml = h.properties.map(p => `
     <div class="property-card">
-      <div class="property-icon">${p.icon}</div>
-      <div class="property-title">${p.title}</div>
-      <div class="property-text">${p.text}</div>
-      <div class="prop-bar-wrap">
-        <div class="prop-bar"><div class="prop-bar-fill" data-level="${p.level}" style="background:var(--accent); width:0"></div></div>
+      <div class="prop-icon">${p.icon}</div>
+      <div class="prop-title">${p.title}</div>
+      <div class="prop-text">${p.text}</div>
+      <div class="gauge-wrap">
+        <div class="gauge-labels"><span>ประสิทธิภาพ</span><span>${p.level}%</span></div>
+        <div class="gauge-track"><div class="gauge-fill" data-level="${p.level}"></div></div>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 
   const usageHtml = h.usage.map(u => `
     <div class="usage-method">
-      <div class="usage-method-header" onclick="toggleMethod(this)">
-        <span class="method-label">${u.title}</span>
-        <span class="method-arrow">▼</span>
+      <div class="usage-header" onclick="toggleUsage(this)">
+        <div class="usage-dot"></div>
+        <span class="usage-label">${u.title}</span>
+        <span class="usage-arrow">▼</span>
       </div>
-      <div class="usage-method-body">
-        <div class="method-steps">${u.steps.replace(/\n/g, '<br>')}</div>
+      <div class="usage-body">
+        <div class="usage-steps">${u.steps.replace(/\n/g,'<br>')}</div>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 
-  detailPanel.innerHTML = `
-    <div class="herb-detail active" id="detail_${h.id}">
+  document.getElementById('herbDetails').innerHTML = `
+    <div class="herb-detail active" id="hd_${h.id}">
       <div class="detail-header">
-        <div class="detail-icon-wrap" style="background:${h.iconBg}">${h.icon}</div>
+        <div class="detail-icon-wrap" style="background:${h.iconBg}">
+          ${h.icon}<span class="icon-gear">⚙</span>
+        </div>
         <div class="detail-title-group">
           <div class="detail-name-en">${h.nameEn}</div>
           <div class="detail-name-th">${h.nameTh}</div>
           <div class="detail-meta">
-            <span class="meta-tag effect-badge ${effectClass}" style="font-size:0.8rem;padding:0.3rem 0.8rem">${h.effectLabel}</span>
-            <span class="meta-tag" style="border-color:var(--border2);color:var(--text2)">${categoryLabel}</span>
-            ${h.tags.filter(t => !['wound','immune','digestive'].includes(t)).map(t => `<span class="meta-tag" style="border-color:var(--border);color:var(--text3)">${t}</span>`).join('')}
+            <span class="meta-tag effect-badge ${ec}" style="font-size:.75rem;padding:.25rem .75rem">${h.effectLabel}</span>
+            <span class="meta-tag" style="border-color:var(--border2);color:var(--text2)">${catLabel}</span>
+            ${dangerTag}
           </div>
         </div>
       </div>
       <div class="detail-tabs">
-        <button class="detail-tab active" onclick="switchTab(this,'desc_${h.id}')">🌿 ลักษณะ</button>
-        <button class="detail-tab" onclick="switchTab(this,'props_${h.id}')">💊 สรรพคุณ</button>
+        <button class="detail-tab active" onclick="switchTab(this,'desc_${h.id}')">📜 ลักษณะ</button>
+        <button class="detail-tab" onclick="switchTab(this,'props_${h.id}')">⚗️ สรรพคุณ</button>
         <button class="detail-tab" onclick="switchTab(this,'usage_${h.id}')">🔧 การใช้งาน</button>
         <button class="detail-tab" onclick="switchTab(this,'warn_${h.id}')">⚠️ คำเตือน</button>
       </div>
       <div class="tab-content active" id="desc_${h.id}">
-        <div class="herb-desc">${h.description}</div>
+        <div class="herb-desc-card">${h.description}</div>
       </div>
       <div class="tab-content" id="props_${h.id}">
         <div class="properties-grid">${propsHtml}</div>
@@ -1305,46 +1837,40 @@ function renderDetail(h) {
         ${usageHtml}
       </div>
       <div class="tab-content" id="warn_${h.id}">
-        <div class="warning-box"><strong>⚠ ข้อควรระวัง</strong>${h.warning}</div>
+        <div class="warning-card">
+          <strong class="warn-label">⚠ ข้อควรระวัง</strong>${h.warning}
+        </div>
       </div>
-    </div>
-  `;
+    </div>`;
 
-  // Animate bars
   setTimeout(() => {
-    document.querySelectorAll('.prop-bar-fill').forEach(bar => {
+    document.querySelectorAll(`#hd_${h.id} .gauge-fill`).forEach(bar => {
       bar.style.width = bar.dataset.level + '%';
     });
-  }, 100);
+  }, 80);
 }
 
 function switchTab(btn, targetId) {
-  const container = btn.closest('.herb-detail');
-  container.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
-  container.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  const hd = btn.closest('.herb-detail');
+  hd.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  hd.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById(targetId).classList.add('active');
+  if (targetId.startsWith('props_')) {
+    setTimeout(() => {
+      document.querySelectorAll(`#${targetId} .gauge-fill`).forEach(bar => {
+        bar.style.width = '0';
+        requestAnimationFrame(() => { bar.style.width = bar.dataset.level + '%'; });
+      });
+    }, 50);
+  }
 }
 
-function toggleMethod(header) {
-  const method = header.closest('.usage-method');
-  method.classList.toggle('open');
+function toggleUsage(header) {
+  header.closest('.usage-method').classList.toggle('open');
 }
 
-// Filtering
-let activeFilter = 'all';
-let searchQuery = '';
-
-function applyFilters() {
-  const filtered = herbs.filter(h => {
-    const matchFilter = activeFilter === 'all' || h.filterTags.includes(activeFilter);
-    const q = searchQuery.toLowerCase();
-    const matchSearch = !q || h.nameEn.toLowerCase().includes(q) || h.nameTh.includes(q) || h.tags.some(t => t.toLowerCase().includes(q));
-    return matchFilter && matchSearch;
-  });
-  buildHerbList(filtered);
-}
-
+// ═══ FILTERS ══════════════════════════════════════
 document.getElementById('filterBar').addEventListener('click', e => {
   const chip = e.target.closest('.filter-chip');
   if (!chip) return;
@@ -1359,56 +1885,228 @@ document.getElementById('searchInput').addEventListener('input', e => {
   applyFilters();
 });
 
-// Particles
-(function() {
-  const canvas = document.getElementById('particles-canvas');
+// ═══ ALCHEMIST TABLE ══════════════════════════════
+function renderSlot(idx) {
+  const slot = document.getElementById('slot' + idx);
+  const h = slots[idx];
+  if (h) {
+    slot.className = 'ingredient-slot filled';
+    slot.innerHTML = `
+      <div class="slot-filled-icon">${h.icon}</div>
+      <div class="slot-filled-name">${h.nameEn}</div>
+      <div class="slot-filled-fx">${h.nameTh}</div>
+      <div class="slot-remove">คลิกเพื่อเอาออก</div>`;
+    slot.onclick = () => removeSlot(idx);
+  } else {
+    slot.className = 'ingredient-slot';
+    slot.innerHTML = `<div class="slot-empty-icon">🌿</div><div class="slot-empty-text">คลิกเพื่อเลือก</div>`;
+    slot.onclick = () => openPicker(idx);
+  }
+  document.getElementById('brewBtn').disabled = slots.filter(Boolean).length === 0;
+  document.getElementById('slotStatusText').textContent = `${slots.filter(Boolean).length}/3 ช่อง`;
+  updatePickerSelection();
+}
+
+function removeSlot(idx) {
+  slots[idx] = null;
+  renderSlot(idx);
+  document.getElementById('resultPanel').classList.remove('glowing');
+  document.getElementById('resultPh').style.display = 'flex';
+  document.getElementById('resultContent').classList.remove('show');
+}
+
+function clearSlots() {
+  slots = [null, null, null];
+  [0,1,2].forEach(renderSlot);
+  document.getElementById('resultPanel').classList.remove('glowing');
+  document.getElementById('resultPh').style.display = 'flex';
+  document.getElementById('resultContent').classList.remove('show');
+  const liq = document.getElementById('cauldronLiquid');
+  if (liq) liq.setAttribute('fill','#1a3a10');
+}
+
+function openPicker(idx) {
+  activePickerSlot = idx;
+  const labels = ['ช่องที่ 1','ช่องที่ 2','ช่องที่ 3'];
+  document.getElementById('pickerSlotLabel').textContent = labels[idx];
+  buildPickerGrid();
+  document.getElementById('herbPickerSection').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function buildPickerGrid() {
+  const grid = document.getElementById('herbPickerGrid');
+  grid.innerHTML = '';
+  const usedIds = slots.filter(Boolean).map(h => h.id);
+  herbs.forEach(h => {
+    const isSelected = slots[activePickerSlot]?.id === h.id;
+    const isUsedElsewhere = usedIds.includes(h.id) && !isSelected;
+    const btn = document.createElement('button');
+    btn.className = 'picker-btn' + (isSelected?' selected':'') + (isUsedElsewhere?' maxed':'');
+    btn.innerHTML = `<span>${h.icon}</span><span>${h.nameEn}</span>`;
+    if (!isUsedElsewhere) btn.onclick = () => selectIngredient(h);
+    grid.appendChild(btn);
+  });
+}
+
+function selectIngredient(herb) {
+  slots[activePickerSlot] = herb;
+  renderSlot(activePickerSlot);
+  const nextEmpty = slots.findIndex((s,i) => s===null && i!==activePickerSlot);
+  if (nextEmpty !== -1) openPicker(nextEmpty);
+}
+
+function updatePickerSelection() {
+  const usedIds = slots.filter(Boolean).map(h => h.id);
+  document.querySelectorAll('.picker-btn').forEach((btn, i) => {
+    const h = herbs[i];
+    if (!h) return;
+    const isSelected = slots[activePickerSlot]?.id === h.id;
+    const isUsedElsewhere = usedIds.includes(h.id) && !isSelected;
+    btn.className = 'picker-btn' + (isSelected?' selected':'') + (isUsedElsewhere?' maxed':'');
+    btn.onclick = !isUsedElsewhere ? () => selectIngredient(h) : null;
+  });
+}
+
+function findMatchingRecipe() {
+  const filledIds = slots.filter(Boolean).map(h => h.id).sort();
+  for (const r of recipes) {
+    if (r.herbs.length !== filledIds.length) continue;
+    if ([...r.herbs].sort().join() === filledIds.join()) return r;
+  }
+  return null;
+}
+
+function generateFreeformResult() {
+  const filled = slots.filter(Boolean);
+  const effects = filled.flatMap(h => h.properties.map(p => p.title));
+  const unique = [...new Set(effects)].slice(0,4);
+  const cool  = filled.filter(h=>h.effect==='cool').length;
+  const hot   = filled.filter(h=>h.effect==='hot').length;
+  const overallEffect = cool>hot?'ฤทธิ์เย็น':hot>cool?'ฤทธิ์ร้อน':'ฤทธิ์ผสม';
+  const dangerous = filled.some(h=>h.filterTags.includes('danger'));
+  return {
+    name: filled.map(h=>h.nameEn.split(' ')[0]).join('-') + ' Compound',
+    nameTh: 'ยาผสม ' + filled.map(h=>h.nameTh).join(' + '),
+    flask: dangerous?'⚠️':'🔶',
+    type: 'Custom Compound · ' + overallEffect,
+    effects: unique.map(u => ({dot:dangerous?'r':'y', text: u + ' — ผลผสมจากการรวมสมุนไพร'})),
+    warning: dangerous
+      ? '⚠ สูตรนี้ประกอบด้วยสมุนไพรอันตราย ต้องระมัดระวังอัตราส่วนอย่างมาก'
+      : 'สูตรอิสระ ยังไม่มีสูตรยาที่รู้จักสำหรับการผสมนี้ ใช้ด้วยความระมัดระวัง'
+  };
+}
+
+function startBrewing() {
+  const filled = slots.filter(Boolean);
+  if (!filled.length) return;
+  const overlay = document.getElementById('brewOverlay');
+  const fill = document.getElementById('brewProgressFill');
+  overlay.classList.add('active');
+  fill.style.transition = 'none';
+  fill.style.width = '0%';
+  setTimeout(() => {
+    fill.style.transition = 'width 1.8s linear';
+    fill.style.width = '100%';
+  }, 50);
+  setTimeout(() => {
+    overlay.classList.remove('active');
+    const matched = findMatchingRecipe();
+    const result = matched || generateFreeformResult();
+    showResult(result);
+  }, 2000);
+}
+
+function showResult(r) {
+  const panel = document.getElementById('resultPanel');
+  const ph    = document.getElementById('resultPh');
+  const content = document.getElementById('resultContent');
+  panel.classList.add('glowing');
+  ph.style.display = 'none';
+  const fxHtml = r.effects.map(e => `
+    <div class="pf-item">
+      <div class="pf-dot ${e.dot}"></div>
+      <span>${e.text}</span>
+    </div>`).join('');
+  content.innerHTML = `
+    <div class="potion-head">
+      <div class="potion-flask">${r.flask}</div>
+      <div>
+        <div class="potion-name">${r.name}</div>
+        <div class="potion-type">${r.nameTh} &nbsp;·&nbsp; ${r.type}</div>
+      </div>
+    </div>
+    <div class="potion-fx-list">${fxHtml}</div>
+    ${r.warning ? `<div class="potion-warn">⚠ ${r.warning}</div>` : ''}`;
+  content.classList.add('show');
+  const colors = {'🔴':'#3a0808','🟡':'#3a3000','🟢':'#0a3010','🔵':'#081828','🟣':'#1a0828','🟤':'#2a1a08','🔶':'#2a1800','⚠️':'#3a0808','⚪':'#181818','🟠':'#2a1400'};
+  const liq = document.getElementById('cauldronLiquid');
+  if (liq) liq.setAttribute('fill', colors[r.flask] || '#1a3a10');
+}
+
+function buildRecipesGrid() {
+  const grid = document.getElementById('recipesGrid');
+  grid.innerHTML = '';
+  const bg = {'🔴':'rgba(184,48,32,.12)','🟡':'rgba(200,168,48,.12)','🟢':'rgba(56,160,80,.12)','🔵':'rgba(56,80,200,.12)','🟣':'rgba(120,48,160,.12)','🟤':'rgba(120,80,48,.12)','🔶':'rgba(184,96,32,.12)','🟠':'rgba(184,120,32,.12)','⚪':'rgba(180,180,180,.07)','⚠️':'rgba(184,48,32,.2)'};
+  recipes.forEach(r => {
+    const card = document.createElement('div');
+    card.className = 'recipe-card';
+    card.style.background = bg[r.flask] || 'var(--card)';
+    const herbNames = r.herbs.map(id => {
+      const h = herbs.find(x=>x.id===id);
+      return h ? `${h.icon} ${h.nameEn}` : id;
+    }).join(', ');
+    card.innerHTML = `
+      <div class="recipe-card-name">${r.flask} ${r.name}</div>
+      <div class="recipe-card-herbs">${herbNames}</div>
+      <div class="recipe-card-effect">${r.effects[0]?.text||''}</div>
+      <span class="recipe-card-badge" style="background:rgba(200,148,42,.15);color:var(--gold2);border:1px solid rgba(200,148,42,.3)">${r.type}</span>`;
+    card.onclick = () => loadRecipe(r);
+    grid.appendChild(card);
+  });
+}
+
+function loadRecipe(r) {
+  clearSlots();
+  r.herbs.forEach((id,i) => {
+    const h = herbs.find(x=>x.id===id);
+    if (h) { slots[i]=h; renderSlot(i); }
+  });
+  document.getElementById('brewRow').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ═══ STEAM PARTICLES ══════════════════════════════
+(function(){
+  const canvas = document.getElementById('steam-canvas');
   const ctx = canvas.getContext('2d');
-  let particles = [];
-  const W = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
-  W();
-  window.addEventListener('resize', W);
-
-  class Particle {
-    constructor() { this.reset(); }
-    reset() {
-      this.x = Math.random() * canvas.width;
-      this.y = Math.random() * canvas.height;
-      this.r = Math.random() * 1.5 + 0.3;
-      this.vx = (Math.random() - 0.5) * 0.3;
-      this.vy = -Math.random() * 0.4 - 0.1;
-      this.life = Math.random();
-      this.maxLife = Math.random() * 0.5 + 0.3;
+  const resize = () => { canvas.width=window.innerWidth; canvas.height=window.innerHeight; };
+  resize(); window.addEventListener('resize', resize);
+  class P {
+    constructor(){this.reset();}
+    reset(){
+      this.x=Math.random()*canvas.width;
+      this.y=Math.random()*canvas.height;
+      this.r=Math.random()*1.5+.3;
+      this.vx=(Math.random()-.5)*.22;
+      this.vy=-(Math.random()*.3+.07);
+      this.life=Math.random(); this.maxLife=Math.random()*.5+.4;
     }
-    update() {
-      this.x += this.vx;
-      this.y += this.vy;
-      this.life += 0.003;
-      if (this.life > this.maxLife || this.y < -5) this.reset();
-    }
-    draw() {
-      const a = Math.sin(this.life / this.maxLife * Math.PI) * 0.5;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(122,184,64,${a})`;
-      ctx.fill();
+    update(){ this.x+=this.vx; this.y+=this.vy; this.life+=.003; if(this.life>this.maxLife||this.y<-8) this.reset(); }
+    draw(){
+      const a=Math.sin(this.life/this.maxLife*Math.PI)*.4;
+      ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(180,148,48,${a})`; ctx.fill();
     }
   }
-
-  for (let i = 0; i < 80; i++) particles.push(new Particle());
-
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => { p.update(); p.draw(); });
-    requestAnimationFrame(animate);
-  }
-  animate();
+  const ps=Array.from({length:95},()=>new P());
+  (function tick(){ ctx.clearRect(0,0,canvas.width,canvas.height); ps.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(tick); })();
 })();
 
-// Init
-buildHerbList(herbs);
-
-// Auto-select first herb
-setTimeout(() => selectHerb(herbs[0]), 100);
+// ═══ INIT ══════════════════════════════════════════
+applyFilters();
+buildPickerGrid();
+buildRecipesGrid();
+[0,1,2].forEach(renderSlot);
+setTimeout(()=>selectHerb(herbs[0]),120);
 </script>
 </body>
 </html>
