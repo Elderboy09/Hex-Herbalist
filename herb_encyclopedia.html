@@ -3,6 +3,1806 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hex Herbarium — คลังสมุนไพรเวทมนตร์</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Sarabun:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void: #0e0a04;
+  --bark-dark: #1a1007;
+  --bark: #2e1d08;
+  --bark-mid: #4a2e0e;
+  --copper: #7a4a1a;
+  --bronze: #a0622a;
+  --bronze-light: #c07a30;
+  --gold: #c89428;
+  --parchment-dark: #b89060;
+  --parchment: #d4b07a;
+  --parchment-light: #e8cfa0;
+  --cream: #f0e0bc;
+  --forest-dark: #0d1f0d;
+  --forest: #1a3a1a;
+  --forest-mid: #2a5a2a;
+  --moss: #3d7a3d;
+  --leaf: #5a9e4a;
+  --sage: #7ab870;
+  --sage-light: #a0cc90;
+  --steam: rgba(200,180,140,0.12);
+  --pipe: #5a3a18;
+  --cold: rgba(160,210,200,0.7);
+  --cold-glow: #7dc8b0;
+  --warm: rgba(200,148,40,0.7);
+  --danger: #8b1a1a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bark-dark);
+  color: var(--parchment-light);
+  font-family: 'Sarabun', serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* === WOOD GRAIN BACKGROUND === */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      91deg,
+      transparent 0px,
+      transparent 18px,
+      rgba(80,45,10,0.08) 18px,
+      rgba(80,45,10,0.08) 20px
+    ),
+    repeating-linear-gradient(
+      89deg,
+      transparent 0px,
+      transparent 35px,
+      rgba(30,15,5,0.06) 35px,
+      rgba(30,15,5,0.06) 37px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* === PIPE DECORATION TOP === */
+.pipe-header {
+  position: relative;
+  background: linear-gradient(180deg, #0d0804 0%, var(--bark-dark) 100%);
+  border-bottom: 3px solid var(--bronze);
+  padding: 0;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.pipe-row {
+  display: flex;
+  align-items: center;
+  height: 18px;
+  background: var(--pipe);
+  border-top: 1px solid var(--bronze-light);
+  border-bottom: 1px solid var(--bark);
+  position: relative;
+}
+.pipe-row::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px, transparent 60px,
+    rgba(192,122,48,0.3) 60px, rgba(192,122,48,0.3) 64px
+  );
+}
+.pipe-row::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(180deg, rgba(255,220,140,0.2) 0%, transparent 100%);
+}
+
+.pipe-steam {
+  position: absolute;
+  bottom: 100%;
+  width: 16px;
+  animation: steamRise 3s ease-in-out infinite;
+  opacity: 0;
+}
+.pipe-steam:nth-child(1) { left: 64px; animation-delay: 0s; }
+.pipe-steam:nth-child(2) { left: 188px; animation-delay: 1.2s; }
+.pipe-steam:nth-child(3) { left: 312px; animation-delay: 0.6s; }
+.pipe-steam:nth-child(4) { left: 600px; animation-delay: 1.8s; }
+.pipe-steam:nth-child(5) { left: 800px; animation-delay: 0.4s; }
+
+@keyframes steamRise {
+  0% { opacity: 0; transform: translateY(0) scaleX(1); }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.2; transform: translateY(-40px) scaleX(1.8); }
+  100% { opacity: 0; transform: translateY(-60px) scaleX(2.2); }
+}
+.pipe-steam svg { width: 16px; height: 40px; }
+
+/* === HEADER CONTENT === */
+.site-header {
+  padding: 2rem 2rem 1.5rem;
+  text-align: center;
+  position: relative;
+}
+
+.header-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+.ornament-line {
+  flex: 1;
+  max-width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--bronze), transparent);
+  position: relative;
+}
+.ornament-line::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: 50%;
+  transform: translateX(-50%);
+  width: 5px; height: 5px;
+  background: var(--bronze);
+  rotate: 45deg;
+}
+.ornament-gear {
+  font-size: 22px;
+  color: var(--bronze);
+  animation: slowSpin 20s linear infinite;
+  display: inline-block;
+}
+@keyframes slowSpin { to { transform: rotate(360deg); } }
+
+.site-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(24px, 4vw, 42px);
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 30px rgba(200,148,40,0.3);
+  margin-bottom: 0.3rem;
+}
+.site-subtitle {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  color: var(--parchment);
+  font-size: 15px;
+  letter-spacing: 0.05em;
+}
+
+/* === FLORA DECORATION === */
+.flora-bar {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  padding: 0.5rem 0;
+  overflow: hidden;
+}
+.flora-bar svg {
+  opacity: 0.4;
+}
+
+/* === SEARCH & FILTER === */
+.controls {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(26,16,7,0.97);
+  border-bottom: 2px solid var(--bark-mid);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  backdrop-filter: blur(8px);
+}
+
+.search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+.search-wrap::before {
+  content: '⊕';
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--bronze);
+  font-size: 14px;
+  pointer-events: none;
+}
+#searchInput {
+  width: 100%;
+  background: var(--bark);
+  border: 1px solid var(--bark-mid);
+  border-radius: 3px;
+  color: var(--parchment-light);
+  font-family: 'Sarabun', sans-serif;
+  font-size: 14px;
+  padding: 8px 12px 8px 34px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#searchInput:focus { border-color: var(--bronze); }
+#searchInput::placeholder { color: var(--copper); }
+
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pill {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 5px 12px;
+  border: 1px solid var(--bark-mid);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--parchment-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.pill:hover { border-color: var(--bronze); color: var(--parchment); }
+.pill.active {
+  background: var(--bark-mid);
+  border-color: var(--bronze);
+  color: var(--gold);
+}
+
+.result-count {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: var(--copper);
+  letter-spacing: 0.1em;
+  margin-left: auto;
+}
+
+/* === CATEGORY SECTION === */
+.category-section {
+  padding: 0 1.5rem 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+.category-section:first-of-type { padding-top: 1.5rem; }
+
+.cat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--bark-mid);
+  position: relative;
+}
+.cat-icon { font-size: 20px; }
+.cat-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bronze-light);
+}
+.cat-count {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: var(--copper);
+  margin-left: auto;
+}
+
+/* === HERB GRID === */
+.herb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* === HERB CARD === */
+.herb-card {
+  background: var(--bark);
+  border: 1px solid var(--bark-mid);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+}
+.herb-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0px, transparent 8px,
+    rgba(80,50,20,0.04) 8px, rgba(80,50,20,0.04) 9px
+  );
+  pointer-events: none;
+}
+.herb-card:hover {
+  border-color: var(--bronze);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 0 1px var(--bronze-light) inset;
+}
+.herb-card.hidden { display: none; }
+
+.card-sketch {
+  background: var(--bark-dark);
+  border-bottom: 1px solid var(--bark-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  height: 140px;
+  position: relative;
+  overflow: hidden;
+}
+.card-sketch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(10,6,2,0.6) 100%);
+  pointer-events: none;
+}
+.card-sketch svg {
+  width: 100%;
+  height: 100%;
+  max-height: 120px;
+}
+
+.card-body {
+  padding: 0.9rem 1rem;
+}
+.card-thai {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+.card-latin {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--copper);
+  margin-bottom: 0.6rem;
+}
+.card-potency {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 2px;
+  margin-bottom: 0.6rem;
+}
+.potency-cold { background: rgba(100,180,200,0.15); border: 1px solid rgba(100,180,200,0.4); color: #90d0c0; }
+.potency-hot { background: rgba(200,80,40,0.15); border: 1px solid rgba(200,80,40,0.4); color: #e09070; }
+.potency-neutral { background: rgba(160,130,80,0.15); border: 1px solid rgba(160,130,80,0.4); color: var(--parchment); }
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 0.6rem;
+}
+.tag {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 2px;
+  background: var(--bark-mid);
+  color: var(--parchment-dark);
+  border: 1px solid rgba(160,130,80,0.2);
+}
+
+.card-summary {
+  font-size: 12px;
+  color: var(--parchment-dark);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer {
+  padding: 0.5rem 1rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-type {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--copper);
+  text-transform: uppercase;
+}
+.card-open {
+  font-size: 10px;
+  color: var(--bronze-light);
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.1em;
+}
+
+/* === MODAL === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,6,2,0.92);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: var(--bark);
+  border: 1px solid var(--bronze);
+  border-radius: 4px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.3s;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bark-mid) transparent;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+
+.modal-pipe-top {
+  height: 12px;
+  background: var(--pipe);
+  border-bottom: 1px solid var(--bronze);
+  position: relative;
+}
+.modal-pipe-top::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px, transparent 40px,
+    rgba(192,122,48,0.4) 40px, rgba(192,122,48,0.4) 44px
+  );
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 16px;
+  background: var(--bark-mid);
+  border: 1px solid var(--bronze);
+  color: var(--parchment);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: 2px;
+  z-index: 10;
+  letter-spacing: 0.1em;
+}
+.modal-close:hover { background: var(--bronze); color: var(--bark-dark); }
+
+.modal-top {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 0;
+  min-height: 200px;
+}
+
+.modal-sketch-panel {
+  background: var(--bark-dark);
+  border-right: 1px solid var(--bark-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.modal-sketch-panel svg {
+  max-width: 160px;
+  max-height: 200px;
+  width: 100%;
+  height: auto;
+}
+
+.modal-info {
+  padding: 1.5rem 3rem 1rem 1.5rem;
+}
+.modal-thai {
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+.modal-latin {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--copper);
+  margin-bottom: 0.75rem;
+}
+.modal-potency {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 4px 12px;
+  border-radius: 2px;
+  margin-bottom: 0.75rem;
+}
+.modal-desc {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--parchment-dark);
+}
+
+.modal-body {
+  padding: 0 1.5rem 1.5rem;
+}
+
+.modal-section {
+  margin-bottom: 1.25rem;
+}
+.modal-section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bronze-light);
+  margin-bottom: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modal-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--bark-mid);
+}
+
+.modal-properties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 0.75rem;
+}
+.modal-tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 2px;
+  background: var(--bark-mid);
+  border: 1px solid rgba(160,130,80,0.25);
+  color: var(--parchment);
+}
+
+.modal-text {
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--parchment-dark);
+  white-space: pre-line;
+}
+
+.modal-warning {
+  background: rgba(100,20,20,0.2);
+  border: 1px solid rgba(160,60,60,0.4);
+  border-radius: 3px;
+  padding: 0.75rem 1rem;
+  font-size: 12px;
+  color: #d09090;
+  line-height: 1.7;
+}
+.modal-warning strong {
+  color: #e06060;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.method-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+}
+.method-item {
+  background: var(--bark-dark);
+  border: 1px solid var(--bark-mid);
+  border-radius: 3px;
+  padding: 0.75rem;
+}
+.method-name {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--bronze-light);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.method-desc {
+  font-size: 11px;
+  color: var(--parchment-dark);
+  line-height: 1.6;
+}
+
+/* === FLOOR PIPE === */
+.pipe-footer {
+  margin-top: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* === NO RESULTS === */
+.no-results {
+  text-align: center;
+  padding: 3rem;
+  color: var(--copper);
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 16px;
+  display: none;
+}
+.no-results.visible { display: block; }
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bark-dark); }
+::-webkit-scrollbar-thumb { background: var(--bark-mid); border-radius: 3px; }
+
+@media (max-width: 600px) {
+  .modal-top { grid-template-columns: 1fr; }
+  .modal-sketch-panel { border-right: none; border-bottom: 1px solid var(--bark-mid); height: 160px; }
+  .herb-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- PIPE HEADER -->
+<div class="pipe-header">
+  <div class="pipe-row">
+    <div class="pipe-steam"><svg viewBox="0 0 16 40" fill="none"><path d="M8 38 Q4 28 8 20 Q12 12 8 2" stroke="rgba(220,200,160,0.6)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <div class="pipe-steam"><svg viewBox="0 0 16 40" fill="none"><path d="M8 38 Q12 28 7 20 Q4 12 9 2" stroke="rgba(220,200,160,0.5)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <div class="pipe-steam"><svg viewBox="0 0 16 40" fill="none"><path d="M8 38 Q5 26 9 18 Q13 10 7 2" stroke="rgba(220,200,160,0.55)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <div class="pipe-steam"><svg viewBox="0 0 16 40" fill="none"><path d="M8 38 Q11 27 6 19 Q3 11 10 2" stroke="rgba(220,200,160,0.5)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <div class="pipe-steam"><svg viewBox="0 0 16 40" fill="none"><path d="M8 38 Q6 27 10 18 Q14 10 7 2" stroke="rgba(220,200,160,0.55)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+  </div>
+
+  <div class="site-header">
+    <div class="header-ornament">
+      <div class="ornament-line"></div>
+      <span class="ornament-gear">⚙</span>
+      <svg width="60" height="24" viewBox="0 0 60 24" fill="none" opacity="0.5">
+        <path d="M0 12 C10 4, 20 20, 30 12 C40 4, 50 20, 60 12" stroke="#a0622a" stroke-width="1"/>
+        <circle cx="5" cy="10" r="2" fill="#7ab870"/>
+        <circle cx="30" cy="12" r="2" fill="#7ab870"/>
+        <circle cx="55" cy="10" r="2" fill="#7ab870"/>
+      </svg>
+      <span class="ornament-gear" style="animation-direction:reverse">⚙</span>
+      <div class="ornament-line" style="background: linear-gradient(270deg, transparent, var(--bronze), transparent);"></div>
+    </div>
+    <div class="site-title">✦ Hex Herbarium ✦</div>
+    <div class="site-subtitle">คลังสมุนไพรแห่งโลกเวทมนตร์ — The Alchemist's Botanical Registry</div>
+
+    <!-- Flora bar -->
+    <div class="flora-bar">
+      <svg width="600" height="32" viewBox="0 0 600 32" fill="none">
+        <!-- Repeating fern/leaf motif -->
+        <g stroke="#5a9e4a" stroke-width="0.8">
+          <path d="M20 28 Q20 20 20 14"/>
+          <path d="M20 22 Q14 16 10 12"/><path d="M20 22 Q26 16 30 12"/>
+          <path d="M20 18 Q13 13 8 10"/><path d="M20 18 Q27 13 32 10"/>
+          <path d="M20 26 Q15 20 12 18"/><path d="M20 26 Q25 20 28 18"/>
+        </g>
+        <g stroke="#5a9e4a" stroke-width="0.8" transform="translate(80,0)">
+          <path d="M20 28 Q20 20 20 14"/>
+          <path d="M20 22 Q14 16 10 12"/><path d="M20 22 Q26 16 30 12"/>
+          <path d="M20 18 Q13 13 8 10"/><path d="M20 18 Q27 13 32 10"/>
+        </g>
+        <!-- center flower -->
+        <g transform="translate(285,4)">
+          <circle cx="15" cy="15" r="4" fill="none" stroke="#c89428" stroke-width="0.8"/>
+          <path d="M15 3 C13 8,12 10,15 11" fill="#3d7a3d" opacity="0.7"/>
+          <path d="M15 3 C17 8,18 10,15 11" fill="#3d7a3d" opacity="0.7"/>
+          <path d="M27 15 C22 13,20 12,19 15" fill="#5a9e4a" opacity="0.7"/>
+          <path d="M27 15 C22 17,20 18,19 15" fill="#5a9e4a" opacity="0.7"/>
+          <path d="M15 27 C13 22,12 20,15 19" fill="#3d7a3d" opacity="0.7"/>
+          <path d="M15 27 C17 22,18 20,15 19" fill="#3d7a3d" opacity="0.7"/>
+          <path d="M3 15 C8 13,10 12,11 15" fill="#5a9e4a" opacity="0.7"/>
+          <path d="M3 15 C8 17,10 18,11 15" fill="#5a9e4a" opacity="0.7"/>
+        </g>
+        <g stroke="#5a9e4a" stroke-width="0.8" transform="translate(460,0)">
+          <path d="M20 28 Q20 20 20 14"/>
+          <path d="M20 22 Q14 16 10 12"/><path d="M20 22 Q26 16 30 12"/>
+          <path d="M20 18 Q13 13 8 10"/><path d="M20 18 Q27 13 32 10"/>
+        </g>
+        <g stroke="#5a9e4a" stroke-width="0.8" transform="translate(540,0)">
+          <path d="M20 28 Q20 20 20 14"/>
+          <path d="M20 22 Q14 16 10 12"/><path d="M20 22 Q26 16 30 12"/>
+          <path d="M20 26 Q15 20 12 18"/><path d="M20 26 Q25 20 28 18"/>
+        </g>
+        <!-- vine lines -->
+        <path d="M50 25 Q80 18 120 22 Q160 26 200 20 Q240 14 285 20" stroke="#3d7a3d" stroke-width="0.6" opacity="0.5" fill="none"/>
+        <path d="M315 20 Q360 14 400 20 Q440 26 480 22 Q520 18 560 25" stroke="#3d7a3d" stroke-width="0.6" opacity="0.5" fill="none"/>
+        <!-- small leaves on vine -->
+        <ellipse cx="140" cy="21" rx="6" ry="3" fill="#3d7a3d" opacity="0.4" transform="rotate(-15 140 21)"/>
+        <ellipse cx="220" cy="18" rx="5" ry="2.5" fill="#3d7a3d" opacity="0.4" transform="rotate(10 220 18)"/>
+        <ellipse cx="380" cy="18" rx="5" ry="2.5" fill="#3d7a3d" opacity="0.4" transform="rotate(-10 380 18)"/>
+        <ellipse cx="460" cy="21" rx="6" ry="3" fill="#3d7a3d" opacity="0.4" transform="rotate(15 460 21)"/>
+      </svg>
+    </div>
+  </div>
+  <div class="pipe-row" style="height:14px;background:#3d2510;"></div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="ค้นหาสมุนไพร... (ชื่อ, สรรพคุณ, ฤทธิ์)">
+  </div>
+  <div class="filter-pills">
+    <button class="pill active" data-filter="all">ทั้งหมด</button>
+    <button class="pill" data-filter="hemostatic">ห้ามเลือด</button>
+    <button class="pill" data-filter="immune">ภูมิคุ้มกัน</button>
+    <button class="pill" data-filter="respiratory">ทางเดินหายใจ</button>
+    <button class="pill" data-filter="nerve">ระบบประสาท</button>
+    <button class="pill" data-filter="digestive">ย่อยอาหาร</button>
+    <button class="pill" data-filter="detox">ล้างพิษ</button>
+    <button class="pill" data-filter="skin">ผิวหนัง</button>
+    <button class="pill" data-filter="fever">ลดไข้</button>
+    <button class="pill" data-filter="mushroom">เห็ด</button>
+    <button class="pill" data-filter="berry">ผลไม้/เบอร์รี่</button>
+  </div>
+  <div class="result-count" id="resultCount">— สมุนไพร 19 ชนิด —</div>
+</div>
+
+<!-- MAIN CONTENT -->
+<main id="mainContent" style="position:relative;z-index:1;">
+  <div class="no-results" id="noResults">⊕ ไม่พบสมุนไพรที่ค้นหา ⊕</div>
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent">
+    <div class="modal-pipe-top"></div>
+    <button class="modal-close" onclick="closeModal()">✕ ปิด</button>
+    <div id="modalInner"></div>
+  </div>
+</div>
+
+<script>
+// ===== HERB DATA =====
+const herbs = [
+  {
+    id: "parasol",
+    thai: "เห็ดร่ม",
+    latin: "Macrolepiota procera",
+    english: "Parasol Mushroom",
+    potency: "neutral",
+    type: "mushroom",
+    tags: ["hemostatic","immune","mushroom"],
+    categories: ["เห็ดและฟังไจ"],
+    summary: "เสริมภูมิคุ้มกัน ปกป้องเซลล์จากการถูกทำลาย ยับยั้งแบคทีเรียบางชนิด โปรตีนสูง วิตามิน",
+    description: "หมวกเห็ดเมื่อยังอ่อนเป็นรูปไข่สีน้ำตาล เมื่อบานออกจะกว้างได้ถึง 10-40 ซม. พื้นผิวมีเกล็ดสีน้ำตาลเข้มกระจายบนพื้นสีขาวหรือครีม ตรงกลางหมวกมีตุ่มนูน ก้านสูงยาว 20-40 ซม. ลายคล้ายหนังงู กลวงและเหนียว ครีปเห็ด(ใต้หมวกเห็ด)สีขาว/ครีม จุดเด่นวงแหวนลวดลายตรงก้าน(เลื่อนขึ้นลงได้)",
+    properties: ["เสริมภูมิคุ้มกัน","ปกป้องเซลล์","ยับยั้งแบคทีเรีย","โปรตีนสูง","วิตามิน"],
+    preparation: "หั่นหมวกเห็ดเป็นแผ่นบาง วางเรียงตะแกรง ตากแดดจนแห้ง แยกหมวกเห็ดกับก้าน เมื่อแห้งเก็บใส่โหลแยกกัน",
+    methods: [
+      { name: "ต้ม", desc: "ต้มในน้ำสะอาดจนเดือด ก้านเคี่ยว 15 นาทีแล้วตัดทิ้ง กินเฉพาะหมวก" },
+      { name: "บด", desc: "บดก้านหรือหมวกที่ตากแห้งจนละเอียด ใช้เป็นผงชงหรือต้มดื่ม" }
+    ],
+    warning: "ผ่านความร้อนให้สุกก่อนรับประทานเสมอทั้งเห็ดดิบและที่ตากแล้ว",
+    sketch: "mushroom_parasol"
+  },
+  {
+    id: "ginseng",
+    thai: "โสมอเมริกัน",
+    latin: "Panax quinquefolius",
+    english: "American Ginseng",
+    potency: "cold",
+    type: "root",
+    tags: ["nerve","immune","fever"],
+    categories: ["บำรุงร่างกาย","ระบบประสาท"],
+    summary: "ปรับสมดุลร่างกาย ทนต่อความเครียด บำรุงปอด ระบายความร้อน บำรุงระบบประสาท เสริมความจำ ควบคุมน้ำตาลในเลือด",
+    description: "มีราก ลำต้น ใบ ดอกและผล รากอวบสีเหลืองอ่อนมีรอยย่นตามขวาง รูปร่างคล้ายคน สั้นและป้อมกว่าโสมตะวันออก เป็นพืชล้มลุกสูง 20-50 ซม. ใบมี 5 แฉกขอบใบเป็นหยักชัดเจน ดอกสีเขียวอมขาวขนาดเล็ก ผลสุกสีแดงสด",
+    properties: ["ปรับสมดุล","บำรุงปอด","ระบายความร้อน","เสริมความจำ","ควบคุมน้ำตาล","ผ่อนคลาย"],
+    preparation: "ล้างรากให้สะอาด หั่นแผ่นบางแล้วตากแห้งจนสนิท หรืออบอุณหภูมิต่ำจนกรอบ เก็บในภาชนะแห้งสนิท",
+    methods: [
+      { name: "ต้ม", desc: "โสมแห้ง 3-5 แผ่น ต้มไฟอ่อน 15 นาที ปิดฝา บำรุงปอด บรรเทาอ่อนเพลีย" },
+      { name: "บด", desc: "บดรากแห้งละเอียด ชงด้วยน้ำอุ่น หรือบรรจุเม็ดยา เสริมความจำ" },
+      { name: "ดองเหล้า", desc: "แช่แอลกอฮอล์ 4-6 สัปดาห์ ใช้หยดผสมน้ำ สำหรับผู้เสียเลือด" },
+      { name: "ดองน้ำผึ้ง", desc: "แช่ในน้ำผึ้ง 2-4 สัปดาห์ จิบแก้ไอ" }
+    ],
+    warning: "ห้ามใช้กับผู้ป่วยเสียเลือดมาก (ถึงขั้นสาหัส) ปริมาณมากอาจเป็นยานอนหลับ",
+    sketch: "ginseng"
+  },
+  {
+    id: "thyme",
+    thai: "Creeping Thyme",
+    latin: "Thymus serpyllum",
+    english: "Creeping Thyme",
+    potency: "hot",
+    type: "herb",
+    tags: ["respiratory","digestive","skin"],
+    categories: ["ทางเดินหายใจ","ย่อยอาหาร"],
+    summary: "ต้านเชื้อ ยับยั้งแบคทีเรียและเชื้อรา แก้ไอขับเสมหะ บรรเทาหลอดลมอักเสบ ย่อยอาหาร ลดท้องอืด กลิ่นหอมช่วยนอนหลับ",
+    description: "ทามไม้เลื้อยตระกูลมินต์ ลำต้นเป็นไม้พุ่มเตี้ยเลื้อยตามดิน สูง 2-10 ซม. ลำต้นเป็นเหลี่ยม ใบขนาดเล็กมากรูปไข่ ขยี้มีกลิ่นหอม ดอกสีชมพูเข้ม ม่วง หรือขาว บานช่วงหน้าร้อน",
+    properties: ["ต้านเชื้อ","ต้านแบคทีเรีย","ต้านเชื้อรา","แก้ไอ","ขับเสมหะ","ย่อยอาหาร","ขับลม"],
+    preparation: "ใช้ช่อกระจุกปลายยอดและราก ตากในร่มลมโกรก ห้ามแดดจัด เก็บแยกดอกและราก",
+    methods: [
+      { name: "ชง", desc: "ชงมากกว่าต้มเพื่อไม่ให้ความร้อนทำลายตัวยา บรรเทาอักเสบ ช่วยย่อย" },
+      { name: "บดพอก", desc: "บดดอกแห้งละเอียดผสมน้ำอุ่น พอกบริเวณแผลเก่า" },
+      { name: "สกัดน้ำมัน", desc: "รากแห้งบดผสมน้ำมันงา ดองในไหที่มืด 4 สัปดาห์ ทาบริเวณขึ้นเชื้อรา" }
+    ],
+    warning: "ไม่ควรใช้ต่อเนื่องนาน อาจมีอาการแพ้ ผื่นขึ้น คลื่นไส้",
+    sketch: "thyme"
+  },
+  {
+    id: "bulrush",
+    thai: "Common Bulrush",
+    latin: "Typha latifolia",
+    english: "Common Bulrush",
+    potency: "cold",
+    type: "aquatic",
+    tags: ["hemostatic","fever","skin"],
+    categories: ["ห้ามเลือด","ผิวหนัง"],
+    summary: "ละอองเรณูช่วยห้ามเลือด เหง้ารากขับปัสสาวะลดบวมน้ำ พอกแก้แผลไฟไหม้ ลดกำเดาไหล แก้ปวดประจำเดือน",
+    description: "พืชล้มลุกอายุหลายปี ลำต้นสูง 1.5-3 ม. ใบแบนยาวคล้ายดาบ ดอกเป็นแท่งทรงกระบอกคล้ายหางแมว ส่วนบนดอกตัวผู้เป็นช่อเรียวสีเหลือง ส่วนล่างคล้ายไส้กรอก",
+    properties: ["ห้ามเลือด","ขับปัสสาวะ","ลดบวม","แก้ไฟไหม้","ลดปวดประจำเดือน"],
+    preparation: "นำดอกละอองเรณูตากแดดบนผ้าสะอาด เหง้า/รากล้างสะอาดปอกเปลือก เก็บแยกชนิด เก็บในที่แห้งและเย็น",
+    methods: [
+      { name: "โรยผง", desc: "ผงโรยแผลสดลดอักเสบ หรือชงดื่มขับปัสสาวะ 1 ช้อนชา" },
+      { name: "พอก", desc: "บดเหง้ารากละเอียด พอกแผลไฟไหม้ ผิวหนังอักเสบ" },
+      { name: "ต้ม", desc: "ต้มหน่อ รากและเหง้า บรรเทาไข้ ขับปัสสาวะ" }
+    ],
+    warning: "ไม่ควรเก็บในบริเวณน้ำขังหรือสกปรก อาจเป็นพิษ",
+    sketch: "bulrush"
+  },
+  {
+    id: "wildmint",
+    thai: "Wild Mint",
+    latin: "Mentha arvensis",
+    english: "Wild Mint",
+    potency: "cold",
+    type: "herb",
+    tags: ["digestive","respiratory","skin","nerve"],
+    categories: ["ย่อยอาหาร","ทางเดินหายใจ"],
+    summary: "ขับลมย่อยอาหาร แก้ท้องอืด บรรเทาหวัด ลดคัดจมูก แก้ปวด ลดอักเสบ ฆ่าเชื้อแบคทีเรีย",
+    description: "ลำต้นเป็นเหลี่ยมสี่มุม เลื้อยตามดิน สูง 10-60 ซม. ใบรูปไข่ขอบหยักฟันเลื่อย ส่งกลิ่นหอมเย็นจัดเมื่อขยี้ ดอกกระจุกกลมตามซอกใบสีม่วงอ่อน รากมีไหลแพร่ตามดิน",
+    properties: ["ขับลม","ย่อยอาหาร","บรรเทาหวัด","ลดคัดจมูก","แก้ไอ","แก้ปวด","ฆ่าเชื้อ"],
+    preparation: "เก็บกิ่งที่มีใบสมบูรณ์ ล้างสะอาดและเก็บในร่มมีลมโกรก ห้ามตากแดดจัด (เพื่อเก็บน้ำมันหอมระเหย)",
+    methods: [
+      { name: "ชง", desc: "ใบสดหรือแห้งชงน้ำร้อนไม่ร้อนจัด ปิดฝา 5 นาที ขับลม ฆ่าเชื้อในปาก" },
+      { name: "บดชา", desc: "บดใบแห้งหยาบ ชงแก้หวัด บรรเทาไอ" },
+      { name: "พอก", desc: "บดละเอียดจนมีน้ำมัน พอกขมับแก้ปวดหัว แก้คันจากสัตว์กัดต่อย" }
+    ],
+    warning: "ไม่ควรถูน้ำมันบริเวณจมูก อาจทำให้เส้นประสาทแตกและเลือดกำเดาไหล",
+    sketch: "wildmint"
+  },
+  {
+    id: "ramhead",
+    thai: "กล้วยไม้นารีหัวแกะ",
+    latin: "Grifola frondosa",
+    english: "Ram Head Orchid",
+    potency: "cold",
+    type: "rare",
+    tags: ["nerve","fever","skin"],
+    categories: ["ระบบประสาท","หายาก"],
+    summary: "ระงับประสาท แก้นอนไม่หลับ กล้ามเนื้อกระตุก ลดไข้อักเสบ ระบายความร้อน ใช้เป็นส่วนผสมยาชา",
+    description: "พืชหายาก ดอกรูปคล้ายหัวแกะ กลีบล่างม้วนกลมเป็นถุงสีขาว มีลายเส้นร่างแห่สีแดงม่วง กลีบเลี้ยงสีเขียวอมน้ำตาล ใบรูปรีสีเขียวอมน้ำเงิน ต้นสูง 10-30 ซม.",
+    properties: ["ระงับประสาท","ลดไข้","ลดอักเสบ","ยาชา","กล้ามเนื้อกระตุก"],
+    preparation: "นำเหง้าและราก ล้างหั่นชิ้นเล็ก ตากแดดจัดจนแห้งสนิท เก็บโหลแก้ว กระดาษไข ใช้ได้ไม่เกิน 6 เดือน",
+    methods: [
+      { name: "ต้ม", desc: "รากแห้ง 1-2 กรัม ต้มไฟอ่อน 15 นาที ปิดฝา คลายเครียด แก้ปวดหัว ลดไข้" },
+      { name: "บด", desc: "บดรากแห้งละเอียด ผสมน้ำอุ่น 1 แก้ว หรือผสมน้ำพอกกล้ามเนื้อกระตุก" },
+      { name: "ดองเหล้า", desc: "แช่รากแห้งในแอลกอฮอล์เข้มข้น 4-6 สัปดาห์ หยดผสมน้ำ ระงับประสาทอย่างอ่อน" }
+    ],
+    warning: "⚠ มีความเป็นพิษสูง เหมาะสำหรับการปรุงยา อาจแพ้ทางผิวหนัง ปริมาณมากทำให้ง่วงซึมรุนแรงและชา",
+    sketch: "ramhead"
+  },
+  {
+    id: "chocolatedaisy",
+    thai: "Chocolate Daisy",
+    latin: "Berlandiera lyrata",
+    english: "Chocolate Daisy",
+    potency: "cold",
+    type: "flower",
+    tags: ["digestive","nerve","respiratory"],
+    categories: ["ระบบประสาท","ย่อยอาหาร"],
+    summary: "ลดความเครียด ผ่อนคลาย แก้ปวดท้องเกร็ง ช่วยระบบทางเดินหายใจ กลิ่นหอมช็อกโกแลตพิเศษ",
+    description: "พืชโดดเด่นด้วยกลิ่นหอมช็อกโกแลตแท้ กลีบดอกสีเหลืองสด ตรงกลางสีน้ำตาลเข้ม ลำต้นและใบคล้ายดอกเดซี่ ใบเรียวยาวสะอาดตา",
+    properties: ["ลดเครียด","ผ่อนคลาย","แก้ปวดท้อง","ขยายหลอดลม","ลดระคายเคืองผิว"],
+    preparation: "ล้างดอกให้สะอาด ผึ่งในที่ร่มที่มีลมโกรก ห้ามตากแดด เก็บใส่โหล",
+    methods: [
+      { name: "ต้ม", desc: "รากหรือดอกแห้ง 1-2 กรัม ต้มไฟอ่อน 10 นาที ปิดฝา แก้ปวดท้องเกร็ง ขับลม" },
+      { name: "เผาธูป", desc: "บดดอกแห้งเผาเป็นธูปสมุนไพร สูดดมขยายหลอดลม ทำถุงหอม" },
+      { name: "พอก", desc: "ผงผสมน้ำสะอาด พอกผิวลดระคายเคือง สัตว์กัดต่อย แพ้ คัน" },
+      { name: "ดองเหล้า", desc: "ดอกและรากแห้งแช่แอลกอฮอล์ 4-6 สัปดาห์ หยดผสมน้ำ กล่อมประสาท" }
+    ],
+    warning: "สูดดมควันมากเกินไปเป็นอันตราย อาจแพ้เกสร รสขมกว่ากลิ่น ควรผสมน้ำผึ้ง",
+    sketch: "daisy"
+  },
+  {
+    id: "burdock",
+    thai: "รากโกโบ",
+    latin: "Arctium lappa",
+    english: "Burdock Root",
+    potency: "cold",
+    type: "root",
+    tags: ["detox","skin","digestive"],
+    categories: ["ล้างพิษ","ผิวหนัง"],
+    summary: "ฟอกเลือด ขับสารพิษ รักษาผิวหนัง ขับปัสสาวะ บำรุงตับ ใยอาหารสูง",
+    description: "รากเรียงยาว 60-100 ซม. เปลือกนอกสีน้ำตาลเข้ม เนื้อในสีขาวนวล ใบขนาดใหญ่รูปหัวใจ ดอกช่อกระจุกสีม่วงแดง มีหนามแหลม",
+    properties: ["ฟอกเลือด","ขับสารพิษ","รักษาผิว","ขับปัสสาวะ","บำรุงตับ","ย่อยอาหาร"],
+    preparation: "ล้างราก หั่นแผ่นบางหรือเส้นยาว ตากแดดจัดจนแห้งสนิท หรืออบจนกรอบ เก็บภาชนะปิดสนิท",
+    methods: [
+      { name: "ต้ม", desc: "รากแห้ง 5-10 กรัม ต้มไฟอ่อน 30 นาที ขับปัสสาวะ บำรุงย่อยอาหาร" },
+      { name: "บด", desc: "บดรากแห้งกรอบ ผสมน้ำอุ่นพอกสิวหรือผื่น หรือชงดื่มล้างพิษ" },
+      { name: "ดองเหล้า", desc: "แช่รากแห้ง 4-6 สัปดาห์ หยด 5-10 หยดกระตุ้นน้ำเหลือง" },
+      { name: "ดองน้ำมัน", desc: "แช่ในน้ำมันงา 2-4 สัปดาห์ ทาหนังศีรษะลดรังแค บำรุงรากผม" }
+    ],
+    warning: "ปริมาณมากทำให้ขาดน้ำรุนแรง ให้กินอาหารโจ๊ก / Parasol mushroom คู่กัน",
+    sketch: "burdock"
+  },
+  {
+    id: "yarrow",
+    thai: "Yarrow",
+    latin: "Achillea millefolium",
+    english: "Yarrow",
+    potency: "cold",
+    type: "herb",
+    tags: ["hemostatic","fever","digestive"],
+    categories: ["ห้ามเลือด","ลดไข้"],
+    summary: "ห้ามเลือดเด่นที่สุด แผลสดหยุดเลือดทันที ลดไข้ บำรุงย่อยอาหาร ขับลม ลดเกร็งลำไส้",
+    description: "ดอกช่อกระจุกแน่นที่ปลายยอด ดอกย่อยเล็กสีขาวหรือชมพู ใบหยักละเอียดซอยคล้ายขนนก เป็นพืชล้มลุกหลายปี มีเหง้าใต้ดินแพร่ขยายรวดเร็ว",
+    properties: ["ห้ามเลือด","ลดไข้","ขับเหงื่อ","ย่อยอาหาร","ขับลม","สมานแผล"],
+    preparation: "เก็บดอกและใบช่วงดอกเริ่มบาน ล้างสะอาด พักในร่มแห้งสนิท ห้ามตากแดด เก็บโหลปิดสนิท",
+    methods: [
+      { name: "พอกสด", desc: "ขยี้ใบสดหรือบดโปะบาดแผล ห้ามเลือดทันที ฆ่าเชื้อในแผล" },
+      { name: "ต้ม", desc: "ใบและดอกแห้ง 1-2 ช้อนชา ต้มไฟอ่อน 5 นาที ลดไข้ ขับเหงื่อ" },
+      { name: "ดองเหล้า", desc: "แช่ดอก/ใบแห้งในแอลกอฮอล์ 4-6 สัปดาห์ 5-10 หยด ปรับสมดุลรอบเดือน" },
+      { name: "ดองน้ำมัน", desc: "แช่ในน้ำมันมะกอก 2-4 สัปดาห์ ทาลดปวดเกร็ง ลดอักเสบผิว" }
+    ],
+    warning: "ไม่ควรดื่มหรือทาติดต่อนาน เพราะผิวจะไวต่อแสงแดด",
+    sketch: "yarrow"
+  },
+  {
+    id: "wildcarrot",
+    thai: "Wild Carrot",
+    latin: "Daucus carota",
+    english: "Wild Carrot",
+    potency: "hot",
+    type: "root",
+    tags: ["detox","digestive","skin"],
+    categories: ["ขับปัสสาวะ","ล้างพิษ"],
+    summary: "ชะล้างทางเดินปัสสาวะ ลดกรดยูริค ป้องกันนิ่วในไต ขับลม ชะล้างพิษ กระตุ้นน้ำดี",
+    description: "ดอกออกเป็นช่อซี่ร่ม สีขาวละเอียดคล้ายผ้าลูกไม้ ตรงกลางมีดอกสีม่วงเข้ม 1 ดอก รากสีขาวเรียวยาว กลิ่นหอมคล้ายแครอท ลำต้นมีขนแข็งปกคลุม",
+    properties: ["ขับปัสสาวะ","ป้องกันนิ่ว","ขับลม","ชะล้างพิษ","กระตุ้นน้ำดี"],
+    preparation: "เก็บช่อดอกมีเมล็ดแก่หรือขูดราก ล้างสะอาด ผึ่งในร่มลมโกรกจนแห้ง แยกเมล็ดและรากออก",
+    methods: [
+      { name: "ชง", desc: "เมล็ดแห้งชงในน้ำอุ่น ขับปัสสาวะ (ไม่มีการต้มสำหรับแครอท)" },
+      { name: "บด", desc: "บดเมล็ดแห้งให้แตก ชงดื่มกระตุ้นรอบเดือน แก้ท้องอืด กระตุ้นย่อย" },
+      { name: "ดองเหล้า", desc: "แช่เมล็ด/รากแห้งในแอลกอฮอล์ 4-6 สัปดาห์ ล้างพิษ ต้านพิษ" },
+      { name: "ดองน้ำมัน", desc: "แช่เมล็ดในน้ำมันเมล็ดองุ่น 2-4 สัปดาห์ ทาหน้าลดริ้วรอย สมานแผลเป็น" }
+    ],
+    warning: "⚠ ระวัง Poison Hemlock ที่เลียนแบบ: Wild Carrot มีขนที่ลำต้น ดอกกลางสีม่วงอ่อน / Hemlock ลำต้นเรียบ ดอกสีม่วงแดง ทามากอาจผิวไวต่อแสง",
+    sketch: "wildcarrot"
+  },
+  {
+    id: "bloodflower",
+    thai: "Blood Flower",
+    latin: "Asclepias curassavica",
+    english: "Scarlet Milkweed",
+    potency: "cold",
+    type: "toxic",
+    tags: ["hemostatic","detox","skin"],
+    categories: ["ฉุกเฉิน","พิษและอันตราย"],
+    summary: "กระตุ้นหัวใจ ขับพยาธิ ยาฉุกเฉินทำให้อาเจียน น้ำยางย่อยโปรตีน ตัดตาปลา ดูดหนองฝี",
+    description: "ดอกช่อกระจุกซี่ร่ม กลีบสีแดงสดพับงอ เกสรรูปมงกุฏสีเหลืองส้ม รากแก้วแข็งแรงมีน้ำยางขาวขุ่น ลำต้นตรง สูง 60-100 ซม. เมล็ดในฝักกระสวยมีขนปุยสีขาว",
+    properties: ["กระตุ้นหัวใจ","ขับพยาธิ","ทำให้อาเจียน","ย่อยโปรตีน","ตัดตาปลา","ดูดหนอง"],
+    preparation: "เก็บราก ล้างด้วยน้ำเย็น (ให้น้ำยางแข็งตัว) หั่นแว่นบาง ผึ่งในที่ร่ม เก็บโหลทึบไม่โดนแสง",
+    methods: [
+      { name: "ต้ม", desc: "รากแห้งต้มไฟอ่อน จิบเล็กน้อยกระตุ้นอาเจียน ขับเสมหะ" },
+      { name: "บดพอก", desc: "ผงรากผสมน้ำเชื่อมเล็กน้อย ขับเสมหะ / ผงใบผสมน้ำผึ้ง พอกฝีดูดหนอง" },
+      { name: "ดองน้ำส้มสายชู", desc: "แช่รากสด 2-4 สัปดาห์ สำลีชุบแต้มหูดหรือตาปลาจนหลุด" }
+    ],
+    warning: "⚠ อันตราย! เกินขนาดทำให้หัวใจเต้นผิดจังหวะ ตาพร่า หัวใจหยุดเต้น น้ำยางสัมผัสผิวทำให้พองพุพอง เข้าตาตาบอด ห้ามผู้ป่วยโรคหัวใจใช้",
+    sketch: "bloodflower"
+  },
+  {
+    id: "cardinal",
+    thai: "Cardinal Flower",
+    latin: "Lobelia cardinalis",
+    english: "Cardinal Flower",
+    potency: "cold",
+    type: "toxic",
+    tags: ["respiratory","nerve"],
+    categories: ["ทางเดินหายใจ","พิษและอันตราย"],
+    summary: "สารโรเวลีนขยายหลอดลม ขับเสมหะ ผ่อนคลายกล้ามเนื้อ ลดวิตกกังวล ช่วยถอนนิโคติน",
+    description: "ดอกช่อกระเปาะยาวตามลำต้น สีแดงสดจัด กลีบแยก 5 แฉก 2 บนชี้ขึ้น 3 ล่างแพร่ออก รากแก้วสั้นมีรากฝอย มักพบตามพื้นที่ชุ่มน้ำ ใบรูปใบหอก เมื่อหักมีน้ำยางขาว",
+    properties: ["ขยายหลอดลม","ขับเสมหะ","ผ่อนคลายกล้ามเนื้อ","ลดวิตกกังวล","ถอนนิโคติน"],
+    preparation: "เก็บใบและดอก ล้างสะอาด แขวนในที่ร่มมืดสนิท ป้องกันแสงทำลายสารอัลคาลอยด์",
+    methods: [
+      { name: "ต้ม", desc: "ใบแห้ง 1-2 ช้อนชา ต้มน้ำร้อน จิบขับเสมหะ ขยายหลอดลม" },
+      { name: "บด", desc: "บดใบแห้งละเอียด ผสมน้ำอุ่น พอกบริเวณปวดบวม" },
+      { name: "ดองเหล้า", desc: "ดอกแช่แอลกอฮอล์ 2-4 สัปดาห์ เพียง 1-3 หยดผสมน้ำ ผ่อนคลาย ระงับไอ" }
+    ],
+    warning: "⚠ เกินขนาด: คลื่นไส้ อาเจียนรุนแรง ตัวสั่น เหงื่อออก ระบบหายใจล้มเหลว",
+    sketch: "cardinal"
+  },
+  {
+    id: "chanterelle",
+    thai: "เห็ด Chanterelle",
+    latin: "Cantharellus cibarius",
+    english: "Chanterelle Mushroom",
+    potency: "neutral",
+    type: "mushroom",
+    tags: ["immune","mushroom"],
+    categories: ["เห็ดและฟังไจ","บำรุงร่างกาย"],
+    summary: "บำรุงสายตา วิตามินเอและเบต้าแคโรทีนสูง เสริมกระดูก วิตามินดีธรรมชาติ ต้านอนุมูลอิสระ เสริมภูมิคุ้มกัน",
+    description: "ดอกรูปกรวยหรือแตร ขอบหยักเป็นคลื่น สีเหลืองทองหรือเหลืองส้ม ครีปดอกเป็นสันนูนไม่แผ่นบาง ก้านตันแน่น ขึ้นตามพื้นดินป่าสนหรือป่าผลัดใบ",
+    properties: ["บำรุงสายตา","วิตามินเอ","เสริมกระดูก","วิตามินดี","ต้านอนุมูลอิสระ","เสริมภูมิคุ้มกัน"],
+    preparation: "ทำความสะอาดด้วยแปรงปัดเบา ห้ามให้เปียกโชก หั่นชิ้นหนา ผึ่งในที่แห้งลมโกรก หรืออบอุณหภูมิต่ำ",
+    methods: [
+      { name: "ต้ม", desc: "ต้มเป็นน้ำสต็อกหรือซุป" },
+      { name: "บด", desc: "บดเป็นผงละเอียด ใช้เป็นเครื่องโรยหน้าอาหาร เพิ่มกลิ่นหอม" },
+      { name: "ดองน้ำมัน", desc: "ผัดกับน้ำมันแล้วแช่น้ำมันมะกอก ใช้น้ำมันเป็นเบสผสมตัวยาอื่น" }
+    ],
+    warning: "ระวัง Jack'o Lantern ซึ่งขึ้นบนขอนไม้ มีครีบดอกแผ่นบาง กินดิบปวดท้อง แพ้รุนแรงหัวใจหยุดเต้น",
+    sketch: "chanterelle"
+  },
+  {
+    id: "baybolete",
+    thai: "เห็ด Bay Bolete",
+    latin: "Imleria badia",
+    english: "Bay Bolete",
+    potency: "neutral",
+    type: "mushroom",
+    tags: ["nerve","immune","mushroom"],
+    categories: ["เห็ดและฟังไจ","ระบบประสาท"],
+    summary: "บำรุงระบบประสาท สมองผ่อนคลาย เพิ่มสมาธิ ต้านอนุมูลอิสระ เสริมภูมิคุ้มกัน",
+    description: "หมวกเห็ดสีน้ำตาลเข้มคล้ายช็อกโกแลต ใต้ดอกเป็นรู สีเหลืองอมเขียว เมื่อกดหรือขีดจะเปลี่ยนสีน้ำเงินทันที ก้านสีน้ำตาลอ่อนกว่าหมวก เนื้อในแน่นขาวนวล",
+    properties: ["บำรุงระบบประสาท","ผ่อนคลายสมอง","เพิ่มสมาธิ","ต้านอนุมูลอิสระ","เสริมภูมิคุ้มกัน"],
+    preparation: "หั่นเห็ดบาง ร้อยด้ายแขวนหรือวางตะแกรงในที่แห้งลมโกรกจนกรอบ เก็บโหลแก้วมิดชิด",
+    methods: [
+      { name: "ต้ม", desc: "ทำซุปหรือซอส เนื้อไม่เละง่าย เหมาะเคี่ยวนาน" },
+      { name: "บด", desc: "บดแห้งเป็นผง โรยอาหารหรือผสมแป้งขนมปัง เพิ่มกลิ่นอายป่า" },
+      { name: "ดองน้ำมัน", desc: "แช่น้ำมันมะกอก 2-4 สัปดาห์ ใช้น้ำมันหยดเพิ่มความหอม" }
+    ],
+    warning: "การเปลี่ยนสีน้ำเงินเมื่อตัดเป็นเรื่องปกติ ระวัง Boletus Satanas (ก้านสีแดงจัด) เป็นพิษต่อทางเดินอาหารรุนแรง",
+    sketch: "baybolete"
+  },
+  {
+    id: "wildfeverfew",
+    thai: "Wild Feverfew",
+    latin: "Parthenium hysterophorus",
+    english: "Wild Feverfew",
+    potency: "cold",
+    type: "herb",
+    tags: ["immune","fever","respiratory"],
+    categories: ["ภูมิคุ้มกัน","ลดไข้"],
+    summary: "กระตุ้นภูมิคุ้มกัน ลดไข้สลับหนาว บรรเทาอักเสบทางเดินหายใจ บำรุงหัวใจอย่างอ่อน",
+    description: "ดอกช่อแน่นสีขาวครีม คล้ายดอกกะหล่ำขนาดเล็ก รากแก้วอวบหนาคล้ายหัวพืช รสขมจัด ลำต้นตรง สูง 60-120 ซม. ใบขนาดใหญ่ผิวสากขอบหยักฟันเลื่อย",
+    properties: ["กระตุ้นภูมิคุ้มกัน","ลดไข้","ลดอักเสบ","บำรุงหัวใจ","ต้านหวัด"],
+    preparation: "เก็บรากหรือส่วนเหนือดิน ล้างสะอาด หั่นรากแว่นหนา ผึ่งในร่มลมโกรกจนแห้ง เก็บโหลแก้วมิดชิด",
+    methods: [
+      { name: "ต้ม", desc: "รากแห้งต้มไฟอ่อน 15 นาที จิบอุ่น ลดไข้ ปรับอุณหภูมิ กระตุ้นภูมิ" },
+      { name: "บด", desc: "บดใบหรือรากแห้งผสมน้ำเล็กน้อย พอกแผลพุพองหรือแผลหายช้า สมานแผล" },
+      { name: "ดองเหล้า", desc: "รากแห้งแช่แอลกอฮอล์ 4-6 สัปดาห์ 15 หยด วันละ 3 ครั้ง บำรุงป้องกันล้มป่วย" }
+    ],
+    warning: "สัมผัสใบสดอาจผื่นคัน ผู้แพ้พืชตระกูลทานตะวัน ระวังเป็นพิเศษ ใช้เกินขนาดปวดท้อง",
+    sketch: "feverfew"
+  },
+  {
+    id: "indiantobacco",
+    thai: "Indian Tobacco",
+    latin: "Lobelia inflata",
+    english: "Indian Tobacco",
+    potency: "hot",
+    type: "toxic",
+    tags: ["respiratory","nerve"],
+    categories: ["ทางเดินหายใจ","พิษและอันตราย"],
+    summary: "สารโลเบรีนขยายหลอดลมรุนแรง รักษาหอบหืด ถอนพิษนิโคติน คลายกล้ามเนื้อ ยาระงับประสาท",
+    description: "ดอกช่อกระเปาะเล็ก สีฟ้าจางหรือม่วงอ่อน แยก 5 แฉก ลำต้นตรงมีขนละเอียด สูง 30-60 ซม. จุดเด่น: ฝักเมล็ดพองลม (Inflata) เมล็ดเล็กมาก กระเด็นเมื่อโดนกระทบ",
+    properties: ["ขยายหลอดลม","รักษาหอบหืด","ถอนนิโคติน","คลายกล้ามเนื้อ","ระงับประสาท"],
+    preparation: "เก็บใบ ดอกและฝัก ผึ่งในร่มมืดสนิท รักษาสารอัลคาลอยด์ เก็บในหม้อหรือไห แห้งและมืด",
+    methods: [
+      { name: "ต้ม", desc: "ใบ/ฝักแห้งน้อยมาก ต้มดับไฟแช่ 5 นาที จิบ 1-2 อึก ขยายหลอดลมฉุกเฉิน" },
+      { name: "บด", desc: "บดใบ ดอก ฝักละเอียด ผสมขี้ผึ้ง ทาหน้าอกช่วยหายใจ หรือพอกกล้ามเนื้ออักเสบ" },
+      { name: "ดองเหล้า", desc: "แช่แอลกอฮอล์เข้มข้น 2-4 สัปดาห์ ใช้เพียง 1-2 หยด แก้หอบหืด" },
+      { name: "ดองน้ำส้ม", desc: "แช่น้ำส้มสายชูแอปเปิ้ล ผสมน้ำผึ้ง ยาจิบแก้ไอแห้ง" }
+    ],
+    warning: "⚠ อันตรายมาก! ปริมาณมาก: อาเจียนรุนแรง ผิวซีดเหลือง ช้ำง่าย ความดันต่ำ ชัก หยุดหายใจ",
+    sketch: "indiantobacco"
+  },
+  {
+    id: "orleanersage",
+    thai: "Orleaner Sage",
+    latin: "Salvia orleander",
+    english: "Orleaner Sage",
+    potency: "neutral",
+    type: "herb",
+    tags: ["respiratory","nerve","skin"],
+    categories: ["ทางเดินหายใจ","ผิวหนัง"],
+    summary: "ฆ่าเชื้อลดอักเสบทางเดินหายใจและช่องปาก กลิ่นหอมผ่อนคลายสมาธิ ฟื้นฟูผิวหนัง สมานแผล",
+    description: "พืชหายาก กึ่งกลางระหว่าง Sage และ Rosebay ดอกสีม่วงเข้มหรือน้ำเงินอมม่วง ปากเปิดแบบ Sage ใบเรียวยาวแข็ง ผิวมีขนสีเทาเงินหนาแน่น เป็นพุ่ม ต้นใหญ่มีเมล็ดดำหรือน้ำตาล",
+    properties: ["ฆ่าเชื้อ","ลดอักเสบ","ผ่อนคลาย","เพิ่มสมาธิ","สมานแผล","ลดผื่นแพ้"],
+    preparation: "เก็บใบและยอดดอก ล้างสะเด็ดน้ำ มัดช่อเล็กในร่มลมโกรก ห้ามตากแดด เก็บภาชนะปิดสนิท",
+    methods: [
+      { name: "ชง", desc: "ใบแห้ง 1-2 ใบ ชงน้ำร้อนไม่เดือด 35 นาที จิบขับเสมหะ กลั้วรักษาแผลในปาก" },
+      { name: "บด", desc: "บดเป็นผงผสมแป้งพอกผิวลดบวมแดง ใบสดขยี้พอกแผลสดสมานและลดคัน" },
+      { name: "ดองเหล้า", desc: "ใบแห้งแช่แอลกอฮอล์ 2-4 สัปดาห์ 15 หยด ช่วยย่อย ลดท้องอืด" },
+      { name: "ดองน้ำมัน", desc: "ใบแห้งในน้ำมันอัลมอนด์ 2-4 สัปดาห์ ทาลดปวดหัว นวดคลายกล้ามเนื้อ" }
+    ],
+    warning: "ปริมาณมากเกินไปส่งผลต่อความดันผิดปกติ รุนแรงสุดทำให้หัวใจเต้นผิดจังหวะและหยุดเต้น",
+    sketch: "sage"
+  },
+  {
+    id: "blueberry",
+    thai: "Blueberry",
+    latin: "Vaccinium corymbosum",
+    english: "Blueberry",
+    potency: "cold",
+    type: "berry",
+    tags: ["immune","detox","berry"],
+    categories: ["ผลไม้และเบอร์รี่","บำรุงสายตา"],
+    summary: "บำรุงสายตา ต้านอนุมูลอิสระ ยับยั้งแบคทีเรียในกระเพาะปัสสาวะ ควบคุมน้ำตาล",
+    description: "ผลทรงกลมเล็ก สีน้ำเงินเข้มถึงดำ มีผงขาวเคลือบ เนื้อในเขียวอ่อนถึงขาว รสหวานอมเปรี้ยว ใบรูปรีสีเขียวสด ในฤดูใบไม้ร่วงใบเปลี่ยนแดงสด ดอกคล้ายระฆังคว่ำ สีขาวหรือชมพู",
+    properties: ["บำรุงสายตา","ต้านอนุมูลอิสระ","ยับยั้งแบคทีเรีย","ควบคุมน้ำตาล","บำรุงหัวใจ"],
+    preparation: "ล้างผลสะอาดผึ่งแห้ง ตากแดดจัดหรืออบ 50-60°C จนหดตัวเหนียวหนึบ ใบตากแห้งชงชาได้",
+    methods: [
+      { name: "ต้ม", desc: "ผลแห้งหรือใบ 1-2 ช้อนโต๊ะ ต้มไฟอ่อน 10 นาที แก้ท้องเสีย ลดไข้" },
+      { name: "บด", desc: "ผงใบชงลดน้ำตาล ผงผลชงบำรุงประสาทและความจำ" },
+      { name: "ดองเหล้า", desc: "แช่ผลในแอลกอฮอล์ 4-6 สัปดาห์ หยดผสมน้ำ บำรุงหัวใจหลอดเลือด" },
+      { name: "ดองน้ำผึ้ง", desc: "ผลสดแช่น้ำผึ้ง 2 สัปดาห์ จิบแก้ไอ บำรุงปอด เสริมภูมิ" }
+    ],
+    warning: "ทานปริมาณเหมาะสม ไม่เหมาะผู้ใช้ยาละลายลิ่มเลือด ทานมากท้องผูก",
+    sketch: "blueberry"
+  },
+  {
+    id: "blackberry",
+    thai: "Blackberry",
+    latin: "Rubus fruticosus",
+    english: "Blackberry",
+    potency: "cold",
+    type: "berry",
+    tags: ["hemostatic","immune","digestive","berry"],
+    categories: ["ผลไม้และเบอร์รี่","สมานแผล"],
+    summary: "สมานแผลในปาก แก้ท้องเสีย ต้านอนุมูลอิสระ เสริมภูมิคุ้มกัน วิตามินซีและเคสูง",
+    description: "ผลกลุ่มประกอบผลย่อยเล็กรวมกัน ผิวมันวาว เมื่อสุกดำสนิท รสหวานอมเปรี้ยว ลำต้นพุ่มมีหนามแหลมคม ใบประกอบขอบหยักฟันเลื่อย",
+    properties: ["สมานแผล","แก้ท้องเสีย","ต้านอนุมูลอิสระ","เสริมภูมิคุ้มกัน","วิตามินซี","วิตามินเค"],
+    preparation: "เก็บใบอ่อนหรือผลสุก ล้างสะอาด ผึ่งในร่มลมโกรกหรืออบอุณหภูมิต่ำ เก็บโหลปิดสนิท",
+    methods: [
+      { name: "ต้ม", desc: "ใบแห้ง 1-2 ช้อนโต๊ะ ต้มไฟอ่อน 10-15 นาที ดื่มหยุดท้องเสีย กลั้วเจ็บคอ" },
+      { name: "บด", desc: "บดใบแห้งกรอบ โรยแผลสดห้ามเลือด หรือผสมน้ำพอกลดอักเสบจากแมลงกัด" },
+      { name: "ดองเหล้า", desc: "แช่ผล/รากในแอลกอฮอล์ 4-6 สัปดาห์ 5-10 หยด บำรุงย่อย ลดไข้" },
+      { name: "ดองน้ำส้ม", desc: "แช่ผลสุกในน้ำส้มสายชูหมัก 3-4 สัปดาห์ กลั้วคอเจ็บรุนแรง เช็ดผิวลดไข้" }
+    ],
+    warning: "ดื่มน้ำส้มมากเกินไปท้องผูกหรือระคายเคืองกระเพาะ",
+    sketch: "blackberry"
+  },
+  {
+    id: "creekplum",
+    thai: "Creekplum",
+    latin: "Prunus angustifolia",
+    english: "Creek Plum",
+    potency: "cold",
+    type: "berry",
+    tags: ["hemostatic","respiratory","digestive","berry"],
+    categories: ["ผลไม้และเบอร์รี่","สมานแผล"],
+    summary: "เปลือกมีสารแทนนินสูง ห้ามเลือด สมานแผล บรรเทาไอเจ็บคอ ผลสุกระบายท้อง ใช้เป็นส่วนผสม",
+    description: "ผลทรงกลมเล็ก สีส้มอมแดง ผลแดงเข้มเมื่อสุก มีนวลขาว เนื้อเหลืองรสเปรี้ยวจัดหวานผสม ดอกสีขาว 5 กลีบ กลิ่นหอมอ่อน เป็นไม้พุ่มหนาแน่นมีหนามสั้น",
+    properties: ["ห้ามเลือด","สมานแผล","บรรเทาไอ","ระบายท้อง","ส่วนผสมยา"],
+    preparation: "เก็บผลสุกแยกเมล็ด เปลือกต้น ใบล้างสะอาด ผึ่งร่มจนแห้ง เปลือกตากกรอบ เก็บโหลไม่โดนแสง",
+    methods: [
+      { name: "ต้ม", desc: "เปลือกแห้ง 5-10 กรัม ต้มไฟอ่อน 15-20 นาที แก้ไอเรื้อรัง กลั้วปากสะอาด" },
+      { name: "บด", desc: "บดเปลือกแห้งผสมน้ำพอกผิว ห้ามเลือด ใช้เป็นส่วนผสมยาอื่น" },
+      { name: "ดองน้ำเชื่อม", desc: "เคี่ยวผลสุกกับน้ำผึ้งจนงวด จิบขับเสมหะ ระบายท้อง แก้ไอเรื้อรัง" },
+      { name: "ดองเหล้า", desc: "แช่เปลือก 4-6 สัปดาห์ หยดผสมน้ำ กระตุ้นย่อยอาหาร บำรุงธาตุ" }
+    ],
+    warning: "ห้ามเคี้ยวเมล็ดหรือใบ มีสาร Resocyanide อาจเป็นพิษไซยาไนด์ ผลสุกมากอาจท้องเสีย",
+    sketch: "creekplum"
+  },
+  {
+    id: "huckleberry",
+    thai: "Evergreen Huckleberry",
+    latin: "Vaccinium ovatum",
+    english: "Evergreen Huckleberry",
+    potency: "cold",
+    type: "berry",
+    tags: ["immune","detox","skin","berry"],
+    categories: ["ผลไม้และเบอร์รี่","สมานแผล"],
+    summary: "ใบควบคุมน้ำตาล ต้านอนุมูลอิสระ ผลบำรุงสายตาและสมอง ฆ่าเชื้อทางเดินปัสสาวะ สมานเนื้อเยื่อ",
+    description: "ใบหนาแข็งมันเงา เขียวตลอดปี ขอบหยักรูปไข่ ผลดำหรือม่วงเข้ม 6-10 มม. เมื่อสุก ผิวมันวาว รสหวานอมเปรี้ยว ใบอ่อนสีแดงอมม่วง เป็นไม้พุ่มสูง 1-3 ม.",
+    properties: ["ควบคุมน้ำตาล","บำรุงสายตา","บำรุงสมอง","ฆ่าเชื้อ","สมานเนื้อเยื่อ"],
+    preparation: "เก็บใบสมบูรณ์หรือผลสุก ตากร่มจนกรอบ ผลอบให้หนึบ เก็บโหล",
+    methods: [
+      { name: "ต้ม", desc: "ใบแห้ง 1-2 ช้อนโต๊ะ ต้มเคี่ยว 10-15 นาที ลดน้ำตาล กลั้วปากแก้ร้อนใน" },
+      { name: "บด", desc: "บดใบแห้งกรอบ ชงแก้ท้องเสีย ผสมน้ำพอกลดอักเสบผิวหนัง" },
+      { name: "ดองเหล้า", desc: "แช่ใบ/ผลแห้ง 4-6 สัปดาห์ บำรุงหลอดเลือดและระบบโลหิต" },
+      { name: "ดองน้ำผึ้ง", desc: "ผลสุกแช่น้ำผึ้งแท้ 2 สัปดาห์ ปิดสนิท จิบแก้ไอ บำรุงปอด เสริมภูมิ" }
+    ],
+    warning: "หากทานร่วมกับยาปฏิชีวนะห้ามเด็ดขาด เลือกอย่างใดอย่างหนึ่ง",
+    sketch: "huckleberry"
+  },
+  {
+    id: "goldencurrant",
+    thai: "Golden Currant",
+    latin: "Ribes aureum",
+    english: "Golden Currant",
+    potency: "cold",
+    type: "berry",
+    tags: ["immune","detox","digestive","berry"],
+    categories: ["ผลไม้และเบอร์รี่","บำรุงเลือด"],
+    summary: "ลดอักเสบในลำคอ บำรุงโลหิต เสริมเม็ดเลือดแดง ระบายท้อง ระบายสารพิษในไต",
+    description: "ดอกสีเหลืองทองกลิ่นหอมวนิลา ผลทรงกลม 6-10 มม. สีตามสายพันธ์ (เหลือง ส้ม แดง ดำ) ใบหยัก 3 แฉกคล้ายเมเปิ้ล ไม่มีหนาม หมายเหตุ: ผลดำเหมาะสำหรับส่วนผสมยาพิษ",
+    properties: ["ต้านอักเสบ","บำรุงโลหิต","เสริมเม็ดเลือดแดง","ระบายท้อง","ระบายพิษไต"],
+    preparation: "เก็บผลสุกหรือใบอ่อน ผึ่งในร่มจนใบกรอบ ผลอบจนแห้งหนึบคล้ายลูกเกด เก็บภาชนะรักษาวิตซี",
+    methods: [
+      { name: "ต้ม", desc: "เปลือก/รากแห้ง 5 กรัม หรือผลแห้งชงน้ำ ขับปัสสาวะ แก้ร้อนใน ลดบวม" },
+      { name: "บด", desc: "บดเปลือกผสมน้ำพอกฝีดูดหนอง ใช้กับตุ่มน้ำ อีสุกอีใส" },
+      { name: "ดองน้ำเชื่อม", desc: "เคี่ยวผลสุกกับน้ำผึ้ง จิบแก้เจ็บคอ ขับเสมหะ เสริมภูมิเด็ก กลิ่นวนิลา" },
+      { name: "ดองเหล้า", desc: "แช่เปลือก/ราก 4-6 สัปดาห์ 5-10 หยด กระตุ้นไหลเวียน บำรุงไต" }
+    ],
+    warning: "ผลดิบหรือยังไม่สุก รวมถึงผลดำมีกรดสูง ระคายกระเพาะ ผลสุกมากเกินท้องเสีย",
+    sketch: "goldencurrant"
+  },
+  {
+    id: "raspberry",
+    thai: "Red Raspberry",
+    latin: "Rubus idaeus",
+    english: "Red Raspberry",
+    potency: "cold",
+    type: "berry",
+    tags: ["hemostatic","immune","detox","berry"],
+    categories: ["ผลไม้และเบอร์รี่","บำรุงเลือด"],
+    summary: "บำรุงกล้ามเนื้อ รักษาแผลในปาก บำรุงเลือด ต้านอนุมูลอิสระ ลดไขมันส่วนเกิน",
+    description: "ผลกลุ่มสีแดงสดทรงกรวยตั้ง รสหวานอมเปรี้ยว กลิ่นหอมเอกลักษณ์ ใบประกอบ 3-5 ใบย่อยขอบฟันเลื่อย ลำต้นพุ่มมีหนามละเอียด",
+    properties: ["บำรุงกล้ามเนื้อ","รักษาแผลในปาก","บำรุงเลือด","ต้านอนุมูลอิสระ","ลดไขมัน"],
+    preparation: "เก็บใบอ่อนสมบูรณ์ ล้างสะอาดผึ่งร่มจนกรอบ ผลอบอุณหภูมิต่ำจนแห้ง",
+    methods: [
+      { name: "ต้ม", desc: "ใบแห้ง 1-2 ช้อนโต๊ะ ต้มเดือดอ่อน 10 นาที แก้ท้องเสีย กลั้วแก้ร้อนใน" },
+      { name: "บด", desc: "บดใบแห้งละเอียด ผสมน้ำพอกลดอักเสบ" },
+      { name: "ดองเหล้า", desc: "ใบแห้งแช่แอลกอฮอล์ 4-6 สัปดาห์ หยดผสมน้ำ กระตุ้นไหลเวียนเลือด" },
+      { name: "ดองน้ำผึ้ง", desc: "แช่ผลสุกในน้ำผึ้ง 2 สัปดาห์ แก้ไอ บำรุงปอด เจ็บคอ" }
+    ],
+    warning: "ดื่มเข้มข้นเกินอาจคลื่นไส้สำหรับผู้กระเพาะบาง",
+    sketch: "raspberry"
+  },
+  {
+    id: "evergreenberry",
+    thai: "Evergreen Berry",
+    latin: "Gaultheria procumbens",
+    english: "Evergreen Berry",
+    potency: "cold",
+    type: "berry",
+    tags: ["digestive","respiratory","skin","berry"],
+    categories: ["ผลไม้และเบอร์รี่","แก้ปวด"],
+    summary: "สารคล้ายแอสไพรินธรรมชาติ ลดปวดกล้ามเนื้อและไขข้อ กลิ่นหอมขยายหลอดลม ขับลม ฆ่าเชื้อในปาก",
+    description: "ผลกลมสีแดงสด เนื้อแป้ง กลิ่นหอมแรง ใบหนาแข็งมันเงาเขียวตลอดปี ขยี้มีกลิ่นหอมเย็น เป็นไม้พุ่มเตี้ยคลุมดิน สูง 10-15 ซม. ดอกระฆังสีขาวหรือชมพูห้อยลง",
+    properties: ["แก้ปวด","ลดอักเสบ","ขยายหลอดลม","ขับลม","ฆ่าเชื้อ","แก้ไข้อักเสบ"],
+    preparation: "เก็บใบแก่สมบูรณ์ ล้างสะอาดผึ่งร่มลมโกรกแห้งสนิท ห้ามตากแดดจัด เก็บโหลแก้ว",
+    methods: [
+      { name: "ต้ม", desc: "ใบแห้ง 1 ช้อนโต๊ะ ต้มไม่เดือด ปิดฝา 10 นาที แก้ปวดข้อ กลั้วปากฆ่าเชื้อ" },
+      { name: "บด", desc: "บดละเอียดเอาน้ำมันหอม พอกกล้ามเนื้อ ลดบวมจากแมลงกัด" },
+      { name: "ดองน้ำมัน", desc: "ใบแห้งแช่น้ำมันมะกอก 4-6 สัปดาห์ ทาถูนวดแก้ปวด น้ำมันนวด" },
+      { name: "ดองเหล้า", desc: "ใบแห้งแช่แอลกอฮอล์ 4-6 สัปดาห์ จิบแก้ท้องเกร็ง ขับลม" }
+    ],
+    warning: "⚠ ห้ามดื่มน้ำมันสกัดโดยตรง รุนแรงถึงตาย ผู้แพ้ยาปฏิชีวนะระวัง ห้ามพอกหรือดมใต้จมูก ลมหายใจติดขัด",
+    sketch: "evergreenberry"
+  },
+  {
+    id: "elderberry",
+    thai: "Elderberry",
+    latin: "Sambucus nigra",
+    english: "Elderberry",
+    potency: "cold",
+    type: "berry",
+    tags: ["immune","fever","respiratory","berry"],
+    categories: ["ผลไม้และเบอร์รี่","ภูมิคุ้มกัน"],
+    summary: "ต้านไวรัสยับยั้งไข้หวัดใหญ่ เสริมภูมิคุ้มกัน ลดไข้ ขับเหงื่อ ช่วยปวดข้อและบวมน้ำ",
+    description: "ดอกช่อแบนสีขาวครีมกลิ่นหอมน้ำผึ้งและเลมอน ผลกลมเล็กพวงระย้าสีม่วงเข้มเกือบดำ น้ำคั้นสีม่วงแดงจัด เป็นไม้พุ่มหรือไม้ยืนต้นเล็ก",
+    properties: ["ต้านไวรัส","เสริมภูมิคุ้มกัน","ลดไข้","ขับเหงื่อ","ลดบวม","บำรุงข้อต่อ"],
+    preparation: "เก็บช่อดอกหรือผลสุก ล้างสะอาดผึ่งร่มจนแห้ง เก็บโหล ไว้ชงชาหน้าหนาว",
+    methods: [
+      { name: "ต้ม", desc: "ผลแห้ง 1-2 ช้อนโต๊ะ ต้มไฟอ่อนปิดฝา 30 นาที ต้องสุก ลดไข้ แก้หวัด" },
+      { name: "บด", desc: "ผลแห้งบดผสมน้ำดื่มหรือโรยอาหาร บำรุงสายตาและหัวใจ" },
+      { name: "ดองน้ำเชื่อม", desc: "ต้มผลสุกกรอง ผสมน้ำผึ้งแท้ จิบวันละ 1-2 ช้อน ป้องกันหวัด สำหรับผู้ป่วยติดเตียง" },
+      { name: "ดองเหล้า", desc: "ผลแห้งแช่แอลกอฮอล์ 4-6 สัปดาห์ 5-10 หยด กระตุ้นน้ำเหลือง แผลตกสเก็ดไว" }
+    ],
+    warning: "ห้ามกินดิบ มีสารไซยาไนด์ คลื่นไส้อาเจียน ผู้ป่วยภูมิแพ้ตัวเองระวัง กระตุ้นภูมิค่อนข้างแรง",
+    sketch: "elderberry"
+  }
+];
+
+// ===== SKETCH GENERATOR =====
+function getSketch(type, color) {
+  const c = color || '#c89428';
+  const green = '#5a9e4a';
+  const sketches = {
+    mushroom_parasol: `<svg viewBox="0 0 120 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="60" cy="55" rx="48" ry="28" fill="none" stroke="${c}" stroke-width="1.2" opacity="0.8"/>
+      <path d="M60 55 C52 58 48 90 50 120" stroke="${c}" stroke-width="1.5" fill="none"/>
+      <path d="M60 55 C68 58 72 90 70 120" stroke="${c}" stroke-width="1" fill="none" opacity="0.5"/>
+      <path d="M14 50 Q60 20 106 50" stroke="${c}" stroke-width="1" fill="none"/>
+      <circle cx="60" cy="40" r="8" stroke="${c}" stroke-width="0.8" fill="none" opacity="0.5"/>
+      <path d="M30 60 Q40 65 50 63" stroke="${c}" stroke-width="0.6" fill="none" opacity="0.5"/>
+      <path d="M70 63 Q80 65 90 60" stroke="${c}" stroke-width="0.6" fill="none" opacity="0.5"/>
+      <ellipse cx="60" cy="110" rx="8" ry="3" fill="none" stroke="${c}" stroke-width="1"/>
+      <path d="M50 120 L70 120" stroke="${c}" stroke-width="1.2"/>
+      <path d="M40 80 L80 80" stroke="${c}" stroke-width="0.5" opacity="0.3" stroke-dasharray="2 3"/>
+    </svg>`,
+    mushroom_generic: `<svg viewBox="0 0 120 130" fill="none">
+      <path d="M30 60 Q60 25 90 60" stroke="${c}" stroke-width="1.2" fill="none"/>
+      <path d="M35 60 C35 60 30 90 50 95 L70 95 C90 90 85 60 85 60" stroke="${c}" stroke-width="1" fill="none" opacity="0.6"/>
+      <line x1="60" y1="95" x2="60" y2="120" stroke="${c}" stroke-width="1.5"/>
+      <ellipse cx="60" cy="120" rx="10" ry="3" stroke="${c}" stroke-width="0.8" fill="none"/>
+    </svg>`,
+    ginseng: `<svg viewBox="0 0 120 140" fill="none">
+      <path d="M60 130 C55 110 48 90 52 70 C54 55 58 40 60 20" stroke="${c}" stroke-width="1.5" fill="none"/>
+      <path d="M52 70 C42 60 35 55 28 58" stroke="${c}" stroke-width="1" fill="none"/>
+      <path d="M52 70 C62 58 70 52 78 55" stroke="${c}" stroke-width="1" fill="none"/>
+      <path d="M55 90 C45 82 38 78 30 80" stroke="${c}" stroke-width="0.8" fill="none" opacity="0.6"/>
+      <path d="M57 85 C67 78 74 75 82 77" stroke="${c}" stroke-width="0.8" fill="none" opacity="0.6"/>
+      <ellipse cx="60" cy="18" rx="5" ry="3" fill="none" stroke="${green}" stroke-width="0.8"/>
+      <path d="M55 25 Q45 22 40 18" stroke="${green}" stroke-width="0.8" fill="none"/>
+      <path d="M65 25 Q75 22 80 18" stroke="${green}" stroke-width="0.8" fill="none"/>
+      <circle cx="60" cy="135" r="5" stroke="${c}" stroke-width="0.8" fill="none" opacity="0.4"/>
+      <path d="M55 135 C45 130 42 120 48 115" stroke="${c}" stroke-width="0.7" fill="none" opacity="0.4"/>
+      <path d="M65 135 C75 130 78 120 72 115" stroke="${c}" stroke-width="0.7" fill="none" opacity="0.4"/>
+    </svg>`,
+    thyme: `<svg viewBox="0 0 120 130" fill="none">
+      <path d="M15 120 Q30 90 40 60 Q50 30 60 20" stroke="${c}" stroke-width="1.5" fill="none"/>
+      <path d="M15 120 Q35 100 55 90 Q75 80 90 70" stroke="${c}" stroke-width="1" fill="none" opacity="0.5"/>
+      <ellipse cx="35" cy="88" rx="8" ry="4" fill="none" stroke="${green}" stroke-width="0.8" transform="rotate(-20 35 88)"/>
+      <ellipse cx="46" cy="68" rx="7" ry="3.5" fill="none" stroke="${green}" stroke-width="0.8" transform="rotate(-30 46 68)"/>
+      <ellipse cx="54" cy="48" rx="6" ry="3" fill="none" stroke="${green}" stroke-width="0.8" transform="rotate(-40 54 48)"/>
+      <ellipse cx="68" cy="82" rx="8" ry="4" fill="none" stroke="${green}" stroke-width="0.8" transform="rotate(10 68 82)"/>
+      <circle cx="60" cy="18" r="4" fill="none" stroke="#d080b0" stroke-width="0.8"/>
+      <circle cx="55" cy="22" r="3" fill="none" stroke="#d080b0" stroke-width="0.8" opacity="0.6"/>
+      <circle cx="65" cy="22" r="3" fill="none" stroke="#d080b0" stroke-width="0.8" opacity="0.6"/>
+    </svg>`,
+    bulrush: `<svg viewBox="0 0 120 140" fill="none">
+      <line x1="60" y1="140" x2="60" y2="30" stroke="${c}" stroke-width="2"/>
+      <ellipse cx="60" cy="55" rx="8" ry="25" fill="none" stroke="${c}" stroke-width="1.2"/>
+      <ellipse cx="60" cy="45" rx="4" ry="12" fill="none" stroke="${c}" stroke-width="0.6" opacity="0.4"/>
+      <line x1="60" y1="30" x2="60" y2="20" stroke="${c}" stroke-width="1.5" opacity="0.6"/>
+      <line x1="40" y1="140" x2="40" y2="50" stroke="${c}" stroke-width="1.5" opacity="0.5"/>
+      <ellipse cx="40" cy="65" rx="6" ry="18" fill="none" stroke="${c}" stroke-width="0.8" opacity="0.5"/>
+      <path d="M60 100 Q80 90 95 95" stroke="${green}" stroke-width="1" fill="none"/>
+      <path d="M60 110 Q35 100 20 105" stroke="${green}" stroke-width="1" fill="none"/>
+      <path d="M40 120 Q20 115 10 118" stroke="${green}" stroke-width="0.8" fill="none" opacity="0.5"/>
+    </svg>`,
+    wildmint: `<svg viewBox="0 0 120 130" fill="none">
+      <path d="M10 120 Q40 110 60 90 Q80 70 100 60" stroke="${c}" stroke-width="1.5" fill="none"/>
+      <ellipse cx="35" cy="108" rx="12" ry="6" fill="none" stroke="${green}" stroke-width="0.9" transform="rotate(-10 35 108)"/>
+      <ellipse cx="55" cy="92" rx="11" ry="5" fill="none" stroke="${green}" stroke-width="0.9" transform="rotate(-20 55 92)"/>
+      <ellipse cx="75" cy="76" rx="10" ry="5" fill="none" stroke="${green}" stroke-width="0.9" transform="rotate(-30 75 76)"/>
+      <path d="M35 108 L33 106" stroke="${green}" stroke-width="0.5"/>
+      <path d="M55 92 L52 90" stroke="${green}" stroke-width="0.5"/>
+      <circle cx="100" cy="56" r="6" fill="none" stroke="#a080d0" stroke-width="1"/>
+      <circle cx="95" cy="52" r="4" fill="none" stroke="#a080d0" stroke-width="0.8" opacity="0.6"/>
+    </svg>`,
+    ramhead: `<svg viewBox="0 0 120 130" fill="none">
+      <path d="M60 120 C55 100 50 80 55 60 C58 45 62 30 60 15" stroke="${c}" stroke-width="1.2" fill="none"/>
+      <path d="M60 50 C45 40 35 35 28 40 C22 45 26 55 35 52" stroke="${c}" stroke-width="1" fill="none"/>
+      <path d="M60 50 C75 40 85 35 92 40 C98 45 94 55 85 52" stroke="${c}" stroke-width="1" fill="none"/>
+      <path d="M45 35 C42 25 38 20 35 22" stroke="${c}" stroke-width="0.8" fill="none" opacity="0.6"/>
+      <path d="M75 35 C78 25 82 20 85 22" stroke="${c}" stroke-width="0.8" fill="none" opacity="0.6"/>
+      <ellipse cx="60" cy="18" rx="10" ry="6" fill="none" stroke="#9080c0" stroke-width="1"/>
+      <path d="M50 16 Q60 10 70 16" stroke="#9080c0" stroke-width="0.8" fill="none"/>
+      <path d="M30 42 Q34 50 30 56" stroke="${c}" stroke-width="0.7" fill="none" opacity="0.5"/>
+      <path d="M90 42 Q86 50 90 56" stroke="${c}" stroke-width="0.7" fill="none" opacity="0.5"/>
+    </svg>`,
+    daisy: `<svg viewBox="0 0 120 130" fill="none">
+      <circle cx="60" cy="55" r="14" fill="none" stroke="#7a4a10" stroke-width="1.5"/>
+      <circle cx="60" cy="55" r="8" fill="none" stroke="${c}" stroke-width="0.8"/>
+      ${[0,30,60,90,120,150,180,210,240,270,300,330].map(a=>{
+        const r=a*Math.PI/180; const x1=60+20*Math.sin(r); const y1=55-20*Math.cos(r);
+        const x2=60+30*Math.sin(r); const y2=55-30*Math.cos(r);
+        return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="4" stroke-linecap="round" opacity="0.8"/>`;
+      }).join('')}
+      <line x1="60" y1="69" x2="60" y2="120" stroke="${green}" stroke-width="1.5"/>
+      <ellipse cx="48" cy="95" rx="10" ry="5" fill="none" stroke="${green}" stroke-width="0.8" transform="rotate(-20 48 95)"/>
+      <ellipse cx="72" cy="85" rx="9" ry="4.5" fill="none" stroke="${green}" stroke-width="0.8" transform="rotate(20 72 85)"/>
+    </svg>`,
+    burdock: `<svg viewBox="0 0 120 140" fill="none">
+      <path d="M60 135 L60 20" stroke="${c}" stroke-width="2" opacity="0.7"/>
+      <path d="M60 40 C40 35 28 38 25 45 C22 52 30 60 40 58" stroke="${c}" stroke-width="1" fill="none"/>
+      <path d="M60 40 C80 35 92 38 95 45 C98 52 90 60 80 58" stroke="${c}" stroke-width="1" fill="none"/>
+      <path d="M60 65 C35 58 22 62 18 70 C14 78 25 86 38 83" stroke="${c}" stroke-width="0.9" fill="none"/>
+      <path d="M60 65 C85 58 98 62 102 70 C106 78 95 86 82 83" stroke="${c}" stroke-width="0.9" fill="none"/>
+      <circle cx="60" cy="20" r="10" fill="none" stroke="#903070" stroke-width="1.2"/>
+      <path d="M52 20 C54 14 58 12 60 14 C62 12 66 14 68 20" stroke="#903070" stroke-width="0.8" fill="none"/>
+      <path d="M60 100 C50 95 44 98 42 104" stroke="${c}" stroke-width="0.7" fill="none" opacity="0.5"/>
+    </svg>`,
+    yarrow: `<svg viewBox="0 0 120 130" fill="none">
+      <line x1="60" y1="125" x2="60" y2="30" stroke="${green}" stroke-width="1.5"/>
+      <path d="M60 30 Q50 15 42 10 Q55 18 60 28 Q65 18 78 10 Q70 15 60 30" stroke="white" stroke-width="1" fill="none" opacity="0.8"/>
+      ${[-30,-20,-10,0,10,20,30].map((x,i)=>{
+        const y = 50 + i*10;
+        return `<path d="M60 ${y} C${60+x} ${y-8} ${60+x+10} ${y-5} ${60+x+15} ${y-8}" stroke="${green}" stroke-width="0.7" fill="none" opacity="0.7"/>
+        <path d="M60 ${y} C${60-x} ${y-8} ${60-x-10} ${y-5} ${60-x-15} ${y-8}" stroke="${green}" stroke-width="0.7" fill="none" opacity="0.7"/>`;
+      }).join('')}
+      <circle cx="60" cy="25" r="12" fill="none" stroke="white" stroke-width="0.8" opacity="0.6"/>
+      <path d="M50 25 Q55 20 60 22 Q65 20 70 25" stroke="white" stroke-width="0.8" fill="none" opacity="0.8"/>
+    </svg>`,
+    wildcarrot: `<svg viewBox="0 0 120 130" fill="none">
+      <circle cx="60" cy="35" r="22" fill="none" stroke="white" stroke-width="0.8" opacity="0.7"/>
+      ${[0,45,90,135,180,225,270,315].map(a=>{
+        const r=a*Math.PI/180; const x=60+18*Math.sin(r); const y=35-18*Math.cos(r);
+        return `<line x1="60" y1="35" x2="${x}" y2="${y}" stroke="white" stroke-width="0.5" opacity="0.5"/>`;
+      }).join('')}
+      <circle cx="60" cy="35" r="3" fill="#7040a0" opacity="0.8"/>
+      <path d="M60 57 C50 65 45 80 50 100 C53 115 58 125 60 130" stroke="${c}" stroke-width="2" fill="none"/>
+      <path d="M60 70 C52 68 46 72 42 78" stroke="${green}" stroke-width="0.8" fill="none"/>
+      <path d="M60 70 C68 68 74 72 78 78" stroke="${green}" stroke-width="0.8" fill="none"/>
+    </svg>`,
+    bloodflower: `<svg viewBox="0 0 120 130" fill="none">
+      ${[0,72,144,216,288].map((a,i)=>{
+        const r=a*Math.PI/180; const x=60+22*Math.sin(r); const y=40-22*Math.cos(r);
+        return `<path d="M60 40 C${x-5} ${y+8} ${x} ${y} ${x+5} ${y-5}" stroke="#c02020" stroke-width="1.2" fill="none" opacity="0.9"/>`;
+      }).join('')}
+      <circle cx="60" cy="40" r="8" fill="none" stroke="#e08030" stroke-width="1.5"/>
+      <circle cx="60" cy="40" r="3" fill="#e08030" opacity="0.7"/>
+      <line x1="60" y1="62" x2="60" y2="110" stroke="${green}" stroke-width="1.5"/>
+      <ellipse cx="44" cy="82" rx="12" ry="5" fill="none" stroke="${green}" stroke-width="0.8" transform="rotate(-15 44 82)"/>
+      <ellipse cx="76" cy="92" rx="12" ry="5" fill="none" stroke="${green}" stroke-width="0.8" transform="rotate(15 76 92)"/>
+      <path d="M55 110 C50 118 52 125 60 128 C68 125 70 118 65 110" stroke="${c}" stroke-width="1" fill="none" opacity="0.7"/>
+    </svg>`,
+    cardinal: `<svg viewBox="0 0 120 130" fill="none">
+      <line x1="60" y1="125" x2="60" y2="20" stroke="${green}" stroke-width="1.5"/>
+      ${[25,40,55,70,85,100].map(y=>
+        `<path d="M60 ${y} C48 ${y-8} 38 ${y-5} 32 ${y-10} L32 ${y-5} C38 ${y} 48 ${y+2} 60 ${y}" stroke="#c02020" stroke-width="1" fill="none"/>
+         <path d="M60 ${y} C72 ${y-6} 82 ${y-3} 88 ${y-8}" stroke="#c02020" stroke-width="0.6" fill="none" opacity="0.4"/>`
+      ).join('')}
+    </svg>`,
+    chanterelle: `<svg viewBox="0 0 120 130" fill="none">
+      <path d="M25 70 Q45 40 60 35 Q75 40 95 70" stroke="#d09020" stroke-width="1.2" fill="none"/>
+      <path d="M30 70 C28 80 32 95 45 100 L75 100 C88 95 92 80 90 70" stroke="#d09020" stroke-width="1" fill="none" opacity="0.7"/>
+      <path d="M40 75 C38 85 40 95 50 99" stroke="#d09020" stroke-width="0.6" fill="none" opacity="0.5"/>
+      <path d="M80 75 C82 85 80 95 70 99" stroke="#d09020" stroke-width="0.6" fill="none" opacity="0.5"/>
+      <line x1="60" y1="100" x2="60" y2="125" stroke="#d09020" stroke-width="2"/>
+      <ellipse cx="60" cy="125" rx="8" ry="3" stroke="#d09020" stroke-width="0.8" fill="none"/>
+    </svg>`,
+    baybolete: `<svg viewBox="0 0 120 130" fill="none">
+      <path d="M20 65 Q40 35 60 30 Q80 35 100 65" stroke="#7a4a10" stroke-width="1.5" fill="none"/>
+      <path d="M22 65 C20 72 28 90 45 95 L75 95 C92 90 100 72 98 65" stroke="#7a4a10" stroke-width="1" fill="none"/>
+      ${[0,1,2,3,4,5,6,7,8].map(i=>{
+        const x=30+i*7; return `<line x1="${x}" y1="70" x2="${x-2}" y2="93" stroke="#7a4a10" stroke-width="0.4" opacity="0.4"/>`;
+      }).join('')}
+      <line x1="60" y1="95" x2="60" y2="122" stroke="#7a4a10" stroke-width="2"/>
+      <circle cx="75" cy="68" r="4" fill="none" stroke="#2050a0" stroke-width="1" opacity="0.6"/>
+    </svg>`,
+    feverfew: `<svg viewBox="0 0 120 130" fill="none">
+      <line x1="60" y1="125" x2="60" y2="40" stroke="${green}" stroke-width="1.5"/>
+      <path d="M40 55 C38 48 42 42 50 40 C58 38 66 42 68 50" fill="none" stroke="white" stroke-width="0.9" opacity="0.7"/>
+      <path d="M70 58 C72 50 78 46 85 48 C92 50 96 58 92 64" fill="none" stroke="white" stroke-width="0.9" opacity="0.7"/>
+      <path d="M60 40 Q50 30 42 28 Q52 34 60 38 Q68 34 78 28 Q70 30 60 40" stroke="white" stroke-width="1" fill="none" opacity="0.8"/>
+      <path d="M60 70 C44 65 36 70 32 78 C28 86 36 96 48 92" stroke="${green}" stroke-width="0.8" fill="none"/>
+      <path d="M60 85 C76 80 84 85 88 93 C92 101 84 111 72 107" stroke="${green}" stroke-width="0.8" fill="none"/>
+    </svg>`,
+    indiantobacco: `<svg viewBox="0 0 120 130" fill="none">
+      <line x1="60" y1="125" x2="60" y2="20" stroke="${green}" stroke-width="1.2"/>
+      ${[25,40,55,70,85].map(y=>
+        `<path d="M60 ${y} C50 ${y-5} 44 ${y-2} 40 ${y-8}" stroke="#6080d0" stroke-width="0.9" fill="none"/>
+         <path d="M60 ${y} C70 ${y-5} 76 ${y-2} 80 ${y-8}" stroke="#6080d0" stroke-width="0.9" fill="none" opacity="0.5"/>`
+      ).join('')}
+      <ellipse cx="74" cy="98" rx="10" ry="14" fill="none" stroke="${c}" stroke-width="1" opacity="0.7"/>
+      <ellipse cx="45" cy="105" rx="8" ry="11" fill="none" stroke="${c}" stroke-width="1" opacity="0.5"/>
+    </svg>`,
+    sage: `<svg viewBox="0 0 120 130" fill="none">
+      <line x1="60" y1="125" x2="60" y2="25" stroke="${c}" stroke-width="1.5"/>
+      ${[30,45,60,75,90].map(y=>
+        `<ellipse cx="${50}" cy="${y}" rx="9" ry="4" fill="none" stroke="#8090b0" stroke-width="0.8" transform="rotate(-20 50 ${y})"/>
+         <ellipse cx="${70}" cy="${y+5}" rx="9" ry="4" fill="none" stroke="#8090b0" stroke-width="0.8" transform="rotate(20 70 ${y+5})"/>`
+      ).join('')}
+      ${[0,1,2,3,4].map(i=>{
+        const y=25+i*12;
+        return `<circle cx="60" cy="${y}" r="4" fill="none" stroke="#7060b0" stroke-width="0.8" opacity="0.7"/>`;
+      }).join('')}
+    </svg>`,
+    blueberry: `<svg viewBox="0 0 120 130" fill="none">
+      <path d="M60 120 C50 105 40 90 42 75 C44 60 55 50 60 35" stroke="${green}" stroke-width="1.2" fill="none"/>
+      ${[[38,60],[55,45],[72,50],[85,65],[75,80],[50,85]].map(([x,y])=>
+        `<circle cx="${x}" cy="${y}" r="9" fill="none" stroke="#6080c0" stroke-width="1.2"/>
+         <circle cx="${x+1}" cy="${y-2}" r="2" fill="none" stroke="#8090c0" stroke-width="0.6" opacity="0.5"/>`
+      ).join('')}
+      <ellipse cx="42" cy="90" rx="10" ry="5" fill="none" stroke="${green}" stroke-width="0.7" transform="rotate(-15 42 90)"/>
+      <ellipse cx="78" cy="75" rx="10" ry="5" fill="none" stroke="${green}" stroke-width="0.7" transform="rotate(15 78 75)"/>
+    </svg>`,
+    blackberry: `<svg viewBox="0 0 120 130" fill="none">
+      <path d="M15 125 Q35 100 55 80 Q75 60 100 45" stroke="${green}" stroke-width="1.2" fill="none"/>
+      <path d="M18 118 Q40 108 58 90" stroke="#7040a0" stroke-width="0.6" fill="none" opacity="0.5"/>
+      ${[[48,70],[58,60],[68,72],[55,82],[42,80],[50,90]].map(([x,y])=>{
+        const dots = [];
+        for(let i=0;i<4;i++){const a=i*90*Math.PI/180; dots.push(`<circle cx="${x+4*Math.sin(a)}" cy="${y-4*Math.cos(a)}" r="3" fill="none" stroke="#7040a0" stroke-width="0.8"/>`); }
+        return dots.join('');
+      }).join('')}
+      <path d="M25 115 L30 105" stroke="${green}" stroke-width="1" opacity="0.6"/>
+      <path d="M45 100 L50 90" stroke="${green}" stroke-width="1" opacity="0.6"/>
+      <path d="M65 85 L70 75" stroke="${green}" stroke-width="1" opacity="0.6"/>
+    </svg>`,
+    creekplum: `<svg viewBox="0 0 120 130" fill="none">
+      <path d="M60 120 C50 108 42 92 45 78 C48 64 58 52 60 35" stroke="${c}" stroke-width="1.2" fill="none"/>
+      ${[[38,72],[55,58],[72,65],[80,82],[60,88],[42,88]].map(([x,y])=>
+        `<circle cx="${x}" cy="${y}" r="10" fill="none" stroke="#e07040" stroke-width="1.2"/>
+         <circle cx="${x}" cy="${y}" r="5" fill="none" stroke="#d09060" stroke-width="0.5" opacity="0.5"/>`
+      ).join('')}
+      <path d="M40 30 Q60 22 80 30" stroke="white" stroke-width="0.8" fill="none" opacity="0.7"/>
+    </svg>`,
+    huckleberry: `<svg viewBox="0 0 120 130" fill="none">
+      ${[[35,65],[52,52],[68,58],[80,72],[72,85],[50,88],[35,80]].map(([x,y])=>
+        `<circle cx="${x}" cy="${y}" r="8" fill="none" stroke="#6040a0" stroke-width="1.2"/>
+         <line x1="${x}" y1="${y-8}" x2="${x}" y2="${y-12}" stroke="#7050b0" stroke-width="0.6"/>`
+      ).join('')}
+      <path d="M40 95 C35 108 38 120 50 122 C62 124 70 118 68 105" stroke="${green}" stroke-width="0.8" fill="none"/>
+      <ellipse cx="78" cy="58" rx="11" ry="6" fill="none" stroke="${green}" stroke-width="0.8" transform="rotate(15 78 58)"/>
+      <ellipse cx="30" cy="72" rx="10" ry="5" fill="none" stroke="${green}" stroke-width="0.8" transform="rotate(-15 30 72)"/>
+    </svg>`,
+    goldencurrant: `<svg viewBox="0 0 120 130" fill="none">
+      <path d="M30 125 C35 110 45 95 55 80 C65 65 75 50 90 35" stroke="${green}" stroke-width="1.2" fill="none"/>
+      ${[[42,75],[55,62],[68,70],[78,58],[62,82],[48,90]].map(([x,y])=>
+        `<circle cx="${x}" cy="${y}" r="8" fill="none" stroke="${c}" stroke-width="1.2"/>
+         <line x1="${x-4}" y1="${y-6}" x2="${x-6}" y2="${y-10}" stroke="${c}" stroke-width="0.6"/>`
+      ).join('')}
+      <path d="M78 50 Q85 38 92 32" stroke="${c}" stroke-width="1" fill="none" opacity="0.7"/>
+      <ellipse cx="88" cy="30" rx="12" ry="6" fill="none" stroke="${c}" stroke-width="1" transform="rotate(-30 88 30)"/>
+    </svg>`,
+    raspberry: `<svg viewBox="0 0 120 130" fill="none">
+      ${[[42,65],[57,52],[72,60],[78,76],[62,85],[45,80]].map(([x,y])=>{
+        const drupes = [];
+        for(let i=0;i<5;i++){const a=i*72*Math.PI/180; drupes.push(`<circle cx="${x+6*Math.sin(a)}" cy="${y-6*Math.cos(a)}" r="3.5" fill="none" stroke="#d04060" stroke-width="0.9"/>`); }
+        drupes.push(`<circle cx="${x}" cy="${y}" r="3.5" fill="none" stroke="#d04060" stroke-width="0.9"/>`);
+        return drupes.join('');
+      }).join('')}
+      <path d="M30 125 C35 110 45 95 50 80" stroke="${green}" stroke-width="1.2" fill="none"/>
+      <ellipse cx="38" cy="98" rx="12" ry="5" fill="none" stroke="${green}" stroke-width="0.7" transform="rotate(-20 38 98)"/>
+    </svg>`,
+    evergreenberry: `<svg viewBox="0 0 120 130" fill="none">
+      ${[[38,70],[52,58],[65,65],[75,78],[62,88],[42,85]].map(([x,y])=>
+        `<circle cx="${x}" cy="${y}" r="9" fill="none" stroke="#c04040" stroke-width="1.2"/>
+         <path d="M${x-3} ${y-7} Q${x} ${y-12} ${x+3} ${y-7}" stroke="#c04040" stroke-width="0.6" fill="none"/>`
+      ).join('')}
+      <path d="M20 125 Q40 105 60 90 Q80 75 100 65" stroke="${green}" stroke-width="1" fill="none" opacity="0.6"/>
+      <ellipse cx="30" cy="115" rx="13" ry="6" fill="none" stroke="${green}" stroke-width="0.9" transform="rotate(-10 30 115)"/>
+      <ellipse cx="65" cy="88" rx="12" ry="5.5" fill="none" stroke="${green}" stroke-width="0.9" transform="rotate(-25 65 88)"/>
+    </svg>`,
+    elderberry: `<svg viewBox="0 0 120 130" fill="none">
+      <path d="M60 125 C55 108 48 90 50 72 C52 55 60 40 60 25" stroke="${c}" stroke-width="1.2" fill="none"/>
+      <path d="M60 50 C45 42 35 38 28 44 C22 50 28 60 38 58" stroke="${c}" stroke-width="0.8" fill="none"/>
+      <path d="M60 50 C75 42 85 38 92 44 C98 50 92 60 82 58" stroke="${c}" stroke-width="0.8" fill="none"/>
+      ${[[38,22],[48,15],[60,12],[72,15],[82,22],[50,28],[70,28]].map(([x,y])=>
+        `<circle cx="${x}" cy="${y}" r="5" fill="none" stroke="#7040a0" stroke-width="1"/>
+         <circle cx="${x}" cy="${y}" r="2" fill="#7040a0" opacity="0.4"/>`
+      ).join('')}
+      <circle cx="60" cy="60" r="18" fill="none" stroke="${c}" stroke-width="0.5" opacity="0.2" stroke-dasharray="2 3"/>
+    </svg>`
+  };
+  return sketches[type] || sketches['mushroom_generic'];
+}
+
+// ===== CATEGORIES =====
+const categoryDefs = [
+  { id: 'hemostatic', label: '🩸 ห้ามเลือด & สมานแผล', desc: 'สมุนไพรที่มีฤทธิ์ห้ามเลือด สมานแผล และรักษาเนื้อเยื่อ' },
+  { id: 'immune', label: '🛡 ภูมิคุ้มกัน & ต้านอนุมูลอิสระ', desc: 'เสริมสร้างภูมิคุ้มกัน กระตุ้นเม็ดเลือดขาว ต้านอนุมูลอิสระ' },
+  { id: 'respiratory', label: '🌬 ทางเดินหายใจ', desc: 'ขยายหลอดลม ขับเสมหะ แก้ไอ บรรเทาคัดจมูก หอบหืด' },
+  { id: 'nerve', label: '🧠 ระบบประสาท & จิตใจ', desc: 'ระงับประสาท ลดเครียด เสริมความจำ ผ่อนคลาย' },
+  { id: 'digestive', label: '🌿 ย่อยอาหาร & ขับลม', desc: 'ย่อยอาหาร ขับลม แก้ท้องอืด กระตุ้นระบบย่อย' },
+  { id: 'detox', label: '💧 ล้างพิษ & ขับปัสสาวะ', desc: 'ฟอกเลือด ล้างพิษ ขับปัสสาวะ กระตุ้นน้ำเหลือง' },
+  { id: 'skin', label: '🌸 ผิวหนัง & ภายนอก', desc: 'รักษาผิวหนัง ลดอักเสบ ฆ่าเชื้อ พอกแผล' },
+  { id: 'fever', label: '🌡 ลดไข้ & สมดุลความร้อน', desc: 'ลดไข้ ระบายความร้อน ขับเหงื่อ ปรับอุณหภูมิ' },
+  { id: 'mushroom', label: '🍄 เห็ดและฟังไจ', desc: 'เห็ดและฟังไจที่มีสรรพคุณทางยา' },
+  { id: 'berry', label: '🫐 ผลไม้ & เบอร์รี่', desc: 'ผลไม้และเบอร์รี่สมุนไพร' },
+];
+
+// ===== RENDER =====
+function getPotencyLabel(p) {
+  if(p==='cold') return {cls:'potency-cold', text:'❄ ฤทธิ์เย็น'};
+  if(p==='hot') return {cls:'potency-hot', text:'🔥 ฤทธิ์ร้อน'};
+  return {cls:'potency-neutral', text:'⚖ ฤทธิ์กลาง'};
+}
+
+function buildCard(herb) {
+  const p = getPotencyLabel(herb.potency);
+  return `
+  <div class="herb-card" data-id="${herb.id}" data-tags="${herb.tags.join(' ')}" onclick="openModal('${herb.id}')">
+    <div class="card-sketch">
+      ${getSketch(herb.sketch)}
+    </div>
+    <div class="card-body">
+      <div class="card-thai">${herb.thai}</div>
+      <div class="card-latin">${herb.latin}</div>
+      <div class="card-potency ${p.cls}">${p.text}</div>
+      <div class="card-tags">
+        ${herb.tags.slice(0,3).map(t=>categoryDefs.find(c=>c.id===t)).filter(Boolean).map(c=>`<span class="tag">${c.label.split(' ').slice(1).join(' ')}</span>`).join('')}
+      </div>
+      <div class="card-summary">${herb.summary}</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-type">${herb.english}</span>
+      <span class="card-open">เปิดดู ›</span>
+    </div>
+  </div>`;
+}
+
+function buildModal(herb) {
+  const p = getPotencyLabel(herb.potency);
+  return `
+  <div class="modal-top">
+    <div class="modal-sketch-panel">${getSketch(herb.sketch, '#c89428')}</div>
+    <div class="modal-info">
+      <div class="modal-thai">${herb.thai}</div>
+      <div class="modal-latin">${herb.latin} · ${herb.english}</div>
+      <div class="modal-potency ${p.cls}">${p.text}</div>
+      <div class="modal-desc">${herb.description}</div>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="modal-section">
+      <div class="modal-section-title">สรรพคุณทางยา</div>
+      <div class="modal-properties">
+        ${herb.properties.map(pr=>`<span class="modal-tag">${pr}</span>`).join('')}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">การเตรียม & ตาก</div>
+      <div class="modal-text">${herb.preparation}</div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">วิธีใช้งาน</div>
+      <div class="method-grid">
+        ${herb.methods.map(m=>`
+        <div class="method-item">
+          <div class="method-name">⚗ ${m.name}</div>
+          <div class="method-desc">${m.desc}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">⚠ ข้อควรระวัง</div>
+      <div class="modal-warning"><strong>คำเตือน</strong>${herb.warning}</div>
+    </div>
+  </div>`;
+}
+
+function renderAll(filter='all', search='') {
+  const main = document.getElementById('mainContent');
+  const noResults = document.getElementById('noResults');
+  const resultCount = document.getElementById('resultCount');
+
+  // filter herbs
+  let filtered = herbs.filter(h => {
+    const matchFilter = filter==='all' || h.tags.includes(filter);
+    const matchSearch = !search || 
+      h.thai.toLowerCase().includes(search) ||
+      h.english.toLowerCase().includes(search) ||
+      h.latin.toLowerCase().includes(search) ||
+      h.summary.includes(search) ||
+      h.properties.some(p=>p.includes(search));
+    return matchFilter && matchSearch;
+  });
+
+  // group by category
+  let html = '';
+  let totalShown = 0;
+
+  const catsToShow = filter==='all' ? categoryDefs : categoryDefs.filter(c=>c.id===filter);
+
+  catsToShow.forEach(cat => {
+    const catHerbs = filtered.filter(h => h.tags.includes(cat.id));
+    if(catHerbs.length === 0) return;
+    totalShown += catHerbs.length;
+    html += `<div class="category-section">
+      <div class="cat-header">
+        <div class="cat-title">${cat.label}</div>
+        <div class="cat-count">${catHerbs.length} ชนิด</div>
+      </div>
+      <div class="herb-grid">
+        ${catHerbs.map(buildCard).join('')}
+      </div>
+    </div>`;
+  });
+
+  // for 'all' filter, also show herbs not in any shown category
+  if(filter==='all' && search) {
+    const shownIds = catsToShow.flatMap(c=>filtered.filter(h=>h.tags.includes(c.id)).map(h=>h.id));
+    const remaining = filtered.filter(h=>!shownIds.includes(h.id));
+    if(remaining.length > 0) {
+      totalShown += remaining.length;
+      html += `<div class="category-section">
+        <div class="cat-header"><div class="cat-title">ผลการค้นหาอื่นๆ</div></div>
+        <div class="herb-grid">${remaining.map(buildCard).join('')}</div>
+      </div>`;
+    }
+  }
+
+  // inject
+  const existingSections = main.querySelectorAll('.category-section');
+  existingSections.forEach(s=>s.remove());
+  main.insertAdjacentHTML('beforeend', html);
+
+  noResults.classList.toggle('visible', totalShown===0);
+  resultCount.textContent = `— สมุนไพร ${totalShown} ชนิด —`;
+}
+
+// ===== MODAL =====
+function openModal(id) {
+  const herb = herbs.find(h=>h.id===id);
+  if(!herb) return;
+  document.getElementById('modalInner').innerHTML = buildModal(herb);
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('modalOverlay').addEventListener('click', function(e){
+  if(e.target===this) closeModal();
+});
+
+// ===== FILTERS =====
+let currentFilter = 'all';
+let currentSearch = '';
+
+document.querySelectorAll('.pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+    pill.classList.add('active');
+    currentFilter = pill.dataset.filter;
+    renderAll(currentFilter, currentSearch);
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input', function() {
+  currentSearch = this.value.toLowerCase().trim();
+  renderAll(currentFilter, currentSearch);
+});
+
+// Initial render
+renderAll();
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hex Herbalist — สารานุกรมสมุนไพร</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
